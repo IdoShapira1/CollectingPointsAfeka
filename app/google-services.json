@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "1020766355607",
+    "firebase_url": "https://missiles-afeka.firebaseio.com",
+    "project_id": "missiles-afeka",
+    "storage_bucket": "missiles-afeka.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1020766355607:android:d8d67ddaafa1c0c9",
+        "android_client_info": {
+          "package_name": "com.final_project_afeka.collectingpointsfinal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1020766355607-eu13nh1tik5qfidgaqp7s2e097g6ls9u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.final_project_afeka.collectingpointsfinal",
+            "certificate_hash": "5267ee90a486c6f6457177609512ef32efd6a0cd"
+          }
+        },
+        {
+          "client_id": "1020766355607-8s5uaj3vj78nmdlkkokelpkuqjanmq12.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "1020766355607-8s5uaj3vj78nmdlkkokelpkuqjanmq12.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmGS_edoEQbVLLUm8sswajunOiwaotnok"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1020766355607-8s5uaj3vj78nmdlkkokelpkuqjanmq12.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
