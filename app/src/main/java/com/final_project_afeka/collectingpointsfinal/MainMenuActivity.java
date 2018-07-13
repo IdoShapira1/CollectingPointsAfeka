@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.PopupMenu;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -112,6 +111,11 @@ public class MainMenuActivity extends AppCompatActivity {
             approveEt.setText(("Points approved "+user.getPointsApproved()));
             declineEt.setText("Points declined "+user.getPointsDeclined());
             collectEt.setText("points collected "+user.getPointsCollected());
+            nameET.setKeyListener(null);
+            approveEt.setKeyListener(null);
+            declineEt.setKeyListener(null);
+            collectEt.setKeyListener(null);
+
         }
     }
 
