@@ -3,4 +3,6 @@
     <string name="insert_points_popup">מסך הזנת נקודות</string>
     <string name="admin_popup"> מסך אישור נקודות אדמין</string>
     <string name="insert_point">Insert Point</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="google_map_api">AIzaSyAHyPdwqIlPvPvCDaUbR7NKehMg0QzwjSI</string>
 </resources>
