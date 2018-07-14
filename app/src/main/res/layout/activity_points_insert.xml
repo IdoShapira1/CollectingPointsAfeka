@@ -6,4 +6,12 @@
     android:layout_height="match_parent"
     tools:context="com.final_project_afeka.collectingpointsfinal.PointsInsert">
 
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="com.google.android.gms.maps.SupportMapFragment"
+        android:name="com.final_project_afeka.collectingpointsfinal.MapsFragment"
+        />
 </android.support.constraint.ConstraintLayout>
