@@ -30,9 +30,7 @@ public class PointsInsert extends AppCompatActivity implements OnMapReadyCallbac
         LatLng sydney = new LatLng(-33.852, 151.211);
         googleMap.addMarker(new MarkerOptions().position(sydney)
                 .title("Marker in Sydney"));
-        float zoom = (float) 15.0;
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,zoom));
-
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
     }
 }
