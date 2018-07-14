@@ -25,6 +25,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -35,6 +36,7 @@ import java.util.Locale;
 public class PointsInsert extends AppCompatActivity implements OnMapReadyCallback{
 
     GoogleMap mMap;
+    Marker myMarker;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int DEFAULT_ZOOM = 16;
     private GeoDataClient mGeoDataClient;
@@ -61,7 +63,7 @@ public class PointsInsert extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
         /**
         LatLng sydney = new LatLng(-33.852, 151.211);
@@ -77,9 +79,32 @@ public class PointsInsert extends AppCompatActivity implements OnMapReadyCallbac
 
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
+        final LatLng PERTH = new LatLng(-31.90, 115.86);
+
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                // First check if myMarker is null
+                if (myMarker == null) {
+                    // Marker was not set yet. Add marker:
+                    myMarker = googleMap.addMarker(new MarkerOptions()
+                            .position(latLng)
+                            .title("הכנס מקום בטוח")
+                            .snippet("Your marker snippet"));
+                } else {
+
+                    // Marker already exists, just update it's position
+                    myMarker.setPosition(latLng);
+
+                }
+            }
+        });
+
 
         //addMarks();
     }
+
+
 
     private void updateLocationUI() {
         if (mMap == null) {
