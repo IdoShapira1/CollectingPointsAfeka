@@ -13,6 +13,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -29,6 +33,12 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 import java.util.Locale;
@@ -36,7 +46,8 @@ import java.util.Locale;
 public class PointsInsert extends AppCompatActivity implements OnMapReadyCallback{
 
     GoogleMap mMap;
-    Marker myMarker;
+    Marker myMarker = null;
+    private FirebaseAuth mAuth;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int DEFAULT_ZOOM = 16;
     private GeoDataClient mGeoDataClient;
@@ -45,21 +56,29 @@ public class PointsInsert extends AppCompatActivity implements OnMapReadyCallbac
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Location mLastKnownLocation;
     private boolean mLocationPermissionGranted;
+    private ImageButton uploadBtn;
+    final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_points_insert);
-
+        mAuth = FirebaseAuth.getInstance();
         mGeoDataClient = Places.getGeoDataClient(this, null);
         // Construct a PlaceDetectionClient.
-       mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
+        mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
+        uploadBtn = (ImageButton)findViewById(R.id.upload__btn_img);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mapFragment);
         mapFragment.getMapAsync(this);
+        uploadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UploadPoint();
+            }
+        });
     }
 
     @Override
@@ -100,8 +119,6 @@ public class PointsInsert extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-
-        //addMarks();
     }
 
 
@@ -205,5 +222,39 @@ public class PointsInsert extends AppCompatActivity implements OnMapReadyCallbac
         return strAdd;
     }
 
+    public void UploadPoint()
+    {
+        if (myMarker != null)
+        {
+            double lng = myMarker.getPosition().longitude;
+            double lat = myMarker.getPosition().latitude;
+            final String uID = mAuth.getCurrentUser().getUid();
+            Shelter shelter = new Shelter(uID,lng,lat,getCompleteAddressString(lat,lng),false);
+
+            database.child("shelters").push().setValue(shelter);
+            database.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    updateUserInformation(dataSnapshot,uID);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+            Toast.makeText(getApplicationContext(), "uploaded the shelter!", Toast.LENGTH_LONG).show();
+        }
+        else{
+            Toast.makeText(getApplicationContext(), "you must to mark a marker!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void updateUserInformation(DataSnapshot dataSnapshot,String uID) {
+        int pointsCollected = dataSnapshot.child("users/"+uID).getValue(User.class).getPointsCollected();
+        int pointsDeclined = dataSnapshot.child("users/"+uID).getValue(User.class).getPointsDeclined();
+        database.child("users/"+uID).child("pointsCollected").setValue(pointsCollected+1);
+        database.child("users/"+uID).child("pointsDeclined").setValue(pointsDeclined+1);
+    }
 
 }
