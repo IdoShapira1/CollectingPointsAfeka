@@ -28,6 +28,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -119,15 +121,30 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 }
             }
         });
-        addPendingMarkers();
-        addApprovedMarkers();
-
+        addSheltersMarkers(0);
+        addSheltersMarkers(1);
     }
 
-    private void addPendingMarkers(){
-
-    }
-    private void addApprovedMarkers(){
+    private void addSheltersMarkers(final int type){
+        // type = 0 pending shelter , type = 1 approved point
+        database.child("shelters").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                BitmapDescriptor color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
+                if(type == 1)
+                    color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Shelter shelter = snapshot.getValue(Shelter.class);
+                    if(shelter.isApproved() == type)
+                        mMap.addMarker(new MarkerOptions().icon(color)
+                                .position(new LatLng(shelter.getLalatitudet(), shelter.getLongitude()))
+                                .title(shelter.getAddress()));
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
 
     }
 
