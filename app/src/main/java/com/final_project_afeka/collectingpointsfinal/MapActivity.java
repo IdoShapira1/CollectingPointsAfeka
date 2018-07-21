@@ -14,6 +14,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -42,6 +44,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -60,6 +63,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private boolean mLocationPermissionGranted;
     private ImageButton uploadBtn;
     final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+    private List<Marker> pendingMarkersList = new ArrayList<>();
+    private List<Marker> approvedMarkersList = new ArrayList<>();
+    private CheckBox pendingCheckBox,approvedCheckBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +81,35 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mapFragment);
         mapFragment.getMapAsync(this);
+        addSheltersMarkers();
+        pendingCheckBox = (CheckBox) findViewById(R.id.pendingPointsCheck);
+        approvedCheckBox = (CheckBox) findViewById(R.id.approvedPointsCheck);
+        pendingCheckBox.setChecked(true);
+        approvedCheckBox.setChecked(true);
+        pendingCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                for(Marker pendingMarker : pendingMarkersList){
+                    if(pendingCheckBox.isChecked())
+                        pendingMarker.setVisible(true);
+                    else
+                        pendingMarker.setVisible(false);
+                }
+            }
+        });
+        approvedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                for(Marker approvedMarker : approvedMarkersList){
+                    if(approvedCheckBox.isChecked())
+                        approvedMarker.setVisible(true);
+                    else
+                        approvedMarker.setVisible(false);
+                }
+            }
+        });
+
+
         uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,11 +123,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
         /**
-        LatLng sydney = new LatLng(-33.852, 151.211);
-        googleMap.addMarker(new MarkerOptions().position(sydney)
-                .title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+         LatLng sydney = new LatLng(-33.852, 151.211);
+         googleMap.addMarker(new MarkerOptions().position(sydney)
+         .title("Marker in Sydney"));
+         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+         mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
          **/
         // prompt the user for permission
         getLocationPermission();
@@ -114,31 +149,36 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             .title("הכנס מקום בטוח")
                             .snippet("Your marker snippet"));
                 } else {
-
                     // Marker already exists, just update it's position
                     myMarker.setPosition(latLng);
 
                 }
             }
         });
-        addSheltersMarkers(0);
-        addSheltersMarkers(1);
+
     }
 
-    private void addSheltersMarkers(final int type){
+    private void addSheltersMarkers(){
         // type = 0 pending shelter , type = 1 approved point
         database.child("shelters").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                BitmapDescriptor color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW);
-                if(type == 1)
-                    color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Shelter shelter = snapshot.getValue(Shelter.class);
-                    if(shelter.isApproved() == type)
-                        mMap.addMarker(new MarkerOptions().icon(color)
-                                .position(new LatLng(shelter.getLalatitudet(), shelter.getLongitude()))
-                                .title(shelter.getAddress()));
+                    MarkerOptions marker = new MarkerOptions()
+                            .position(new LatLng(shelter.getLalatitudet(), shelter.getLongitude()))
+                            .title(shelter.getAddress());
+                    if(shelter.isApproved() == 1)
+                    {
+
+                        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                        approvedMarkersList.add(mMap.addMarker(marker));
+                    }else{
+                        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+                        pendingMarkersList.add(mMap.addMarker(marker));
+                    }
+
+
                 }
             }
             @Override
@@ -279,9 +319,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void updateUserInformation(DataSnapshot dataSnapshot,String uID) {
         int pointsCollected = dataSnapshot.child("users/"+uID).getValue(User.class).getPointsCollected();
-     //   int pointsDeclined = dataSnapshot.child("users/"+uID).getValue(User.class).getPointsDeclined();
+        //   int pointsDeclined = dataSnapshot.child("users/"+uID).getValue(User.class).getPointsDeclined();
         database.child("users/"+uID).child("pointsCollected").setValue(pointsCollected+1);
-       // database.child("users/"+uID).child("pointsDeclined").setValue(pointsDeclined+1);
+        // database.child("users/"+uID).child("pointsDeclined").setValue(pointsDeclined+1);
     }
 
 }
