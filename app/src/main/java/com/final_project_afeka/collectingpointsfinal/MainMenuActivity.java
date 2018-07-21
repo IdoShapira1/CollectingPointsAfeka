@@ -51,7 +51,7 @@ public class MainMenuActivity extends AppCompatActivity {
                     public boolean onMenuItemClick(MenuItem item) {
                         switch(item.getOrder()){
                             case 0:
-                                startActivity(new Intent(MainMenuActivity.this,PointsInsert.class));
+                                startActivity(new Intent(MainMenuActivity.this,MapActivity.class));
                                 break;
                             case 1:
                                 startActivity(new Intent(MainMenuActivity.this,AdminActions.class));
@@ -86,11 +86,11 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     private void showData(DataSnapshot dataSnapshot) {
+        DataSnapshot data_user;
         String uID = mAuth.getCurrentUser().getUid();
-        for (DataSnapshot ds : dataSnapshot.getChildren())
-        {
+        data_user=dataSnapshot.child("users").child(uID);
             user = new User();
-            if(ds.child(uID).getValue() == null){ // create user if doesn't exist yet
+            if(data_user== null){ // create user if doesn't exist yet
                 mDatabase.child("users").child(uID).child("email").setValue(mAuth.getCurrentUser().getEmail());
                 mDatabase.child("users").child(uID).child("isAdmin").setValue(0);
                 mDatabase.child("users").child(uID).child("pointsApproved").setValue(0);
@@ -103,11 +103,11 @@ public class MainMenuActivity extends AppCompatActivity {
                 user.setPointsDeclined(0);
 
             }else { // fetch user
-                user.setEmail(ds.child(uID).getValue(User.class).getEmail());
-                user.setIsAdmin(ds.child(uID).getValue(User.class).getIsAdmin());
-                user.setPointsApproved(ds.child(uID).getValue(User.class).getPointsApproved());
-                user.setPointsCollected(ds.child(uID).getValue(User.class).getPointsCollected());
-                user.setPointsDeclined(ds.child(uID).getValue(User.class).getPointsDeclined());
+                user.setEmail(data_user.getValue(User.class).getEmail());
+                user.setIsAdmin(data_user.getValue(User.class).getIsAdmin());
+                user.setPointsApproved(data_user.getValue(User.class).getPointsApproved());
+                user.setPointsCollected(data_user.getValue(User.class).getPointsCollected());
+                user.setPointsDeclined(data_user.getValue(User.class).getPointsDeclined());
             }
             nameET.setText(user.getEmail());
             approveEt.setText(("Points approved "+user.getPointsApproved()));
@@ -118,7 +118,7 @@ public class MainMenuActivity extends AppCompatActivity {
             declineEt.setKeyListener(null);
             collectEt.setKeyListener(null);
 
-        }
+        //}
     }
 
 }

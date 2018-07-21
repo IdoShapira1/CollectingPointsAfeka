@@ -7,12 +7,19 @@ public class Shelter {
     private double longitude;
     private double lalatitudet;
     private String address;
-    private boolean isApproved;
+    private int isApproved;
+
+    /**
+     *  isApproved logic:
+     *  1 = approved
+     *  0 = waiting approval
+     *  -1 = declined
+     */
 
     public Shelter() {
     }
 
-    public Shelter(String uId, double longitude, double lalatitudet, String address, boolean isApproved) {
+    public Shelter(String uId, double longitude, double lalatitudet, String address, int isApproved) {
         this.uId = uId;
         this.longitude = longitude;
         this.lalatitudet = lalatitudet;
@@ -36,7 +43,7 @@ public class Shelter {
         this.address = address;
     }
 
-    public void setApproved(boolean approved) {
+    public void setApproved(int approved) {
         isApproved = approved;
     }
 
@@ -56,7 +63,7 @@ public class Shelter {
         return address;
     }
 
-    public boolean isApproved() {
+    public int isApproved() {
         return isApproved;
     }
 }

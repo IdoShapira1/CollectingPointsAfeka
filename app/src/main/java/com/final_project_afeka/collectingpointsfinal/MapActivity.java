@@ -43,7 +43,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.List;
 import java.util.Locale;
 
-public class PointsInsert extends AppCompatActivity implements OnMapReadyCallback{
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     GoogleMap mMap;
     Marker myMarker = null;
@@ -79,6 +79,7 @@ public class PointsInsert extends AppCompatActivity implements OnMapReadyCallbac
                 UploadPoint();
             }
         });
+
     }
 
     @Override
@@ -118,6 +119,15 @@ public class PointsInsert extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
         });
+        addPendingMarkers();
+        addApprovedMarkers();
+
+    }
+
+    private void addPendingMarkers(){
+
+    }
+    private void addApprovedMarkers(){
 
     }
 
@@ -229,7 +239,7 @@ public class PointsInsert extends AppCompatActivity implements OnMapReadyCallbac
             double lng = myMarker.getPosition().longitude;
             double lat = myMarker.getPosition().latitude;
             final String uID = mAuth.getCurrentUser().getUid();
-            Shelter shelter = new Shelter(uID,lng,lat,getCompleteAddressString(lat,lng),false);
+            Shelter shelter = new Shelter(uID,lng,lat,getCompleteAddressString(lat,lng),0);
 
             database.child("shelters").push().setValue(shelter);
             database.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -243,18 +253,18 @@ public class PointsInsert extends AppCompatActivity implements OnMapReadyCallbac
 
                 }
             });
-            Toast.makeText(getApplicationContext(), "uploaded the shelter!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "מחסה הועלה למאגר הנתונים", Toast.LENGTH_LONG).show();
         }
         else{
-            Toast.makeText(getApplicationContext(), "you must to mark a marker!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "אנא בחר נקודה!", Toast.LENGTH_LONG).show();
         }
     }
 
     private void updateUserInformation(DataSnapshot dataSnapshot,String uID) {
         int pointsCollected = dataSnapshot.child("users/"+uID).getValue(User.class).getPointsCollected();
-        int pointsDeclined = dataSnapshot.child("users/"+uID).getValue(User.class).getPointsDeclined();
+     //   int pointsDeclined = dataSnapshot.child("users/"+uID).getValue(User.class).getPointsDeclined();
         database.child("users/"+uID).child("pointsCollected").setValue(pointsCollected+1);
-        database.child("users/"+uID).child("pointsDeclined").setValue(pointsDeclined+1);
+       // database.child("users/"+uID).child("pointsDeclined").setValue(pointsDeclined+1);
     }
 
 }

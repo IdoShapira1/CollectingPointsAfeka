@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainMenuActivity" />
-        <activity android:name=".PointsInsert" />
+        <activity android:name=".MapActivity" />
         <activity android:name=".AdminActions" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
