@@ -6,4 +6,20 @@
     android:layout_height="match_parent"
     tools:context="com.final_project_afeka.collectingpointsfinal.PointsInsert">
 
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="com.google.android.gms.maps.SupportMapFragment"
+        android:name="com.final_project_afeka.collectingpointsfinal.MapsFragment"
+        />
+
+    <ImageButton
+        android:id="@+id/upload__btn_img"
+        android:layout_width="40dp"
+        android:layout_height="38dp"
+        app:srcCompat="@android:drawable/ic_menu_upload_you_tube"
+         />
+
 </android.support.constraint.ConstraintLayout>

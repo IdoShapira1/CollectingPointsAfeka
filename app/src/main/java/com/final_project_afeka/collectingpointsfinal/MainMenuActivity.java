@@ -52,8 +52,10 @@ public class MainMenuActivity extends AppCompatActivity {
                         switch(item.getOrder()){
                             case 0:
                                 startActivity(new Intent(MainMenuActivity.this,PointsInsert.class));
+                                break;
                             case 1:
                                 startActivity(new Intent(MainMenuActivity.this,AdminActions.class));
+                                break;
 
                         }
                         return true;
