@@ -82,7 +82,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private List<Marker> approvedMarkersList = new ArrayList<>();
     private CheckBox pendingCheckBox,approvedCheckBox;
     private Polyline polyline;
-
+    private int spinnerCheck = 0;
 
 
     @Override
@@ -123,14 +123,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onItemSelected(AdapterView<?> adapterView, View view,
                                        int position, long id) {
                 // Here you get the current item (a User object) that is selected by its position
-                Marker mark = (Marker) spinner.getSelectedItem();
-                LatLng origin = new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude());
-                LatLng dest = new LatLng(mark.getPosition().latitude,mark.getPosition().longitude);
-                //getting URL to the Google direction API
-                String url = getDirectionsUrl(origin, dest);
-                DownloadTask downloadTask = new DownloadTask();
-                // Start downloading json data from Google Directions API
-                downloadTask.execute(url);
+
+                if(++spinnerCheck > 1) {
+                    Marker mark = (Marker) spinner.getSelectedItem();
+                    LatLng origin = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+                    LatLng dest = new LatLng(mark.getPosition().latitude, mark.getPosition().longitude);
+                    //getting URL to the Google direction API
+                    String url = getDirectionsUrl(origin, dest);
+                    DownloadTask downloadTask = new DownloadTask();
+                    // Start downloading json data from Google Directions API
+                    downloadTask.execute(url);
+                }
+
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapter) {  }
