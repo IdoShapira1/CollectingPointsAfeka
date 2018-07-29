@@ -10,5 +10,11 @@
     <string name="test_navigation">בדוק ניווט לנקודה מהמיקום הנוכחי</string>
     <string name="insert_new_point">הכנס נקודה חדשה</string>
 
+    <string-array name="numbers">
+        <item> </item>
+        <item> One</item>
+        <item> Two</item>
+    </string-array>
+
 
 </resources>

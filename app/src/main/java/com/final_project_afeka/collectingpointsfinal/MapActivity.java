@@ -4,20 +4,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -31,7 +28,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -63,11 +59,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback{
+
 
     GoogleMap mMap;
     Marker myMarker = null;
@@ -88,6 +83,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private CheckBox pendingCheckBox,approvedCheckBox;
     private Polyline polyline;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,10 +102,42 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         addSheltersMarkers();
         addFilters();
+        uploadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UploadPoint();
+            }
+        });
 
 
     }
 
+
+    private void addSheltersNavigation(){
+        List<Marker> allLists = new ArrayList(pendingMarkersList);
+        allLists.addAll(approvedMarkersList);
+        MarkersAdapter customAdapter = new MarkersAdapter(getApplicationContext(),android.R.layout.simple_spinner_item,allLists);
+        spinner.setAdapter(customAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view,
+                                       int position, long id) {
+                // Here you get the current item (a User object) that is selected by its position
+                Marker mark = (Marker) spinner.getSelectedItem();
+                LatLng origin = new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude());
+                LatLng dest = new LatLng(mark.getPosition().latitude,mark.getPosition().longitude);
+                //getting URL to the Google direction API
+                String url = getDirectionsUrl(origin, dest);
+                DownloadTask downloadTask = new DownloadTask();
+                // Start downloading json data from Google Directions API
+                downloadTask.execute(url);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapter) {  }
+        });
+
+
+    }
     private void addFilters(){
         pendingCheckBox = (CheckBox) findViewById(R.id.pendingPointsCheck);
         approvedCheckBox = (CheckBox) findViewById(R.id.approvedPointsCheck);
@@ -138,13 +167,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
 
 
-        uploadBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UploadPoint();
-            }
-        });
-
     }
     @Override
     public void onMapReady(final GoogleMap googleMap) {
@@ -167,30 +189,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             .position(latLng)
                             .title("הכנס מקום בטוח")
                             .snippet("Your marker snippet"));
-                    LatLng origin = new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude());
-                    LatLng dest = new LatLng(myMarker.getPosition().latitude,myMarker.getPosition().longitude);
-                    //gettig URL to the Google direction API
-                    String url = getDirectionsUrl(origin, dest);
-                    DownloadTask downloadTask = new DownloadTask();
-
-                    // Start downloading json data from Google Directions API
-                    downloadTask.execute(url);
-
                 } else {
                     // Marker already exists, just update it's position
                     myMarker.setPosition(latLng);
-                    LatLng origin = new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude());
-                    LatLng dest = new LatLng(myMarker.getPosition().latitude,myMarker.getPosition().longitude);
-                    //gettig URL to the Google direction API
-                    String url = getDirectionsUrl(origin, dest);
-                    DownloadTask downloadTask = new DownloadTask();
-
-                    // Start downloading json data from Google Directions API
-                    downloadTask.execute(url);
-
                 }
             }
         });
+
 
     }
 
@@ -216,6 +221,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
 
                 }
+                addSheltersNavigation();
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
