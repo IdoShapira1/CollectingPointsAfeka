@@ -18,6 +18,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 
@@ -35,6 +36,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -47,6 +49,23 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import android.graphics.Color;
+import android.os.AsyncTask;
+
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback{
 
@@ -62,10 +81,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Location mLastKnownLocation;
     private boolean mLocationPermissionGranted;
     private ImageButton uploadBtn;
+    private Spinner spinner;
     final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
     private List<Marker> pendingMarkersList = new ArrayList<>();
     private List<Marker> approvedMarkersList = new ArrayList<>();
     private CheckBox pendingCheckBox,approvedCheckBox;
+    private Polyline polyline;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,10 +99,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         uploadBtn = (ImageButton)findViewById(R.id.upload__btn_img);
+        spinner = (Spinner) findViewById(R.id.listOfShelters);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mapFragment);
         mapFragment.getMapAsync(this);
         addSheltersMarkers();
+        addFilters();
+
+
+    }
+
+    private void addFilters(){
         pendingCheckBox = (CheckBox) findViewById(R.id.pendingPointsCheck);
         approvedCheckBox = (CheckBox) findViewById(R.id.approvedPointsCheck);
         pendingCheckBox.setChecked(true);
@@ -118,25 +146,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
 
     }
-
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
-        /**
-         LatLng sydney = new LatLng(-33.852, 151.211);
-         googleMap.addMarker(new MarkerOptions().position(sydney)
-         .title("Marker in Sydney"));
-         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-         mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-         **/
+
         // prompt the user for permission
         getLocationPermission();
         // Turn on the My Location layer and the related control on the map.
         updateLocationUI();
-
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
-        final LatLng PERTH = new LatLng(-31.90, 115.86);
 
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
@@ -148,9 +167,26 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             .position(latLng)
                             .title("הכנס מקום בטוח")
                             .snippet("Your marker snippet"));
+                    LatLng origin = new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude());
+                    LatLng dest = new LatLng(myMarker.getPosition().latitude,myMarker.getPosition().longitude);
+                    //gettig URL to the Google direction API
+                    String url = getDirectionsUrl(origin, dest);
+                    DownloadTask downloadTask = new DownloadTask();
+
+                    // Start downloading json data from Google Directions API
+                    downloadTask.execute(url);
+
                 } else {
                     // Marker already exists, just update it's position
                     myMarker.setPosition(latLng);
+                    LatLng origin = new LatLng(mLastKnownLocation.getLatitude(),mLastKnownLocation.getLongitude());
+                    LatLng dest = new LatLng(myMarker.getPosition().latitude,myMarker.getPosition().longitude);
+                    //gettig URL to the Google direction API
+                    String url = getDirectionsUrl(origin, dest);
+                    DownloadTask downloadTask = new DownloadTask();
+
+                    // Start downloading json data from Google Directions API
+                    downloadTask.execute(url);
 
                 }
             }
@@ -324,4 +360,179 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         // database.child("users/"+uID).child("pointsDeclined").setValue(pointsDeclined+1);
     }
 
+
+
+
+
+    private class DownloadTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... url) {
+
+            String data = "";
+
+            try {
+                data = downloadUrl(url[0]);
+            } catch (Exception e) {
+                Log.d("Background Task", e.toString());
+            }
+            return data;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            ParserTask parserTask = new ParserTask();
+
+
+            parserTask.execute(result);
+
+        }
+    }
+
+
+    /**
+     * A class to parse the Google Places in JSON format
+     */
+
+
+    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
+
+        // Parsing the data in non-ui thread
+        @Override
+        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
+
+            JSONObject jObject;
+            List<List<HashMap<String, String>>> routes = null;
+
+            try {
+                jObject = new JSONObject(jsonData[0]);
+                DirectionsJSONParser parser = new DirectionsJSONParser();
+
+                routes = parser.parse(jObject);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return routes;
+        }
+
+        @Override
+        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
+            ArrayList points = null;
+            PolylineOptions lineOptions = null;
+            MarkerOptions markerOptions = new MarkerOptions();
+
+            for (int i = 0; i < result.size(); i++) {
+                points = new ArrayList();
+                lineOptions = new PolylineOptions();
+
+                List<HashMap<String, String>> path = result.get(i);
+
+                for (int j = 0; j < path.size(); j++) {
+                    HashMap<String, String> point = path.get(j);
+
+                    double lat = Double.parseDouble(point.get("lat"));
+                    double lng = Double.parseDouble(point.get("lng"));
+                    LatLng position = new LatLng(lat, lng);
+
+                    points.add(position);
+                }
+
+                lineOptions.addAll(points);
+                lineOptions.width(12);
+                lineOptions.color(Color.RED);
+                lineOptions.geodesic(true);
+
+            }
+
+// Drawing polyline in the Google Map for the i-th route
+            try{
+                if (polyline != null)
+                        polyline.remove();
+                polyline = mMap.addPolyline(lineOptions);
+            } catch(Exception e){
+                Toast.makeText(getApplicationContext(), "לא ניתן לייצר מסלול לנקודה זו", Toast.LENGTH_LONG).show();
+            }
+
+        }
+    }
+
+    private String getDirectionsUrl(LatLng origin, LatLng dest) {
+
+        // Origin of route
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+
+        // Destination of route
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+
+        // Sensor enabled
+        String sensor = "sensor=true";
+        String mode = "mode=walking";
+        // Building the parameters to the web service
+        String parameters = str_origin + "&" + str_dest + "&" + sensor + "&" + mode;
+
+        // Output format
+        String output = "json";
+
+        // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
+
+        return url;
+    }
+
+    /**
+     * A method to download json data from url
+     */
+    private String downloadUrl(String strUrl) throws IOException {
+        String data = "";
+        InputStream iStream = null;
+        HttpURLConnection urlConnection = null;
+        try {
+            URL url = new URL(strUrl);
+
+            urlConnection = (HttpURLConnection) url.openConnection();
+
+            urlConnection.connect();
+
+            iStream = urlConnection.getInputStream();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
+
+            StringBuffer sb = new StringBuffer();
+
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+
+            data = sb.toString();
+
+            br.close();
+
+        } catch (Exception e) {
+            Log.d("Exception", e.toString());
+        } finally {
+            iStream.close();
+            urlConnection.disconnect();
+        }
+        return data;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

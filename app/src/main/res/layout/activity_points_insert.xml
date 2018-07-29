@@ -11,26 +11,33 @@
         android:id="@+id/mapFragment"
         android:name="com.final_project_afeka.collectingpointsfinal.MapsFragment"
         class="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="381dp"
+        android:layout_height="377dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.035" />
 
     <ImageButton
         android:id="@+id/upload__btn_img"
         android:layout_width="40dp"
-        android:layout_height="38dp"
-        app:srcCompat="@android:drawable/ic_menu_upload_you_tube"
-         />
+        android:layout_height="35dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/pendingPointsCheck"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mapFragment"
+        app:layout_constraintVertical_bias="0.812"
+        app:srcCompat="@android:drawable/ic_menu_upload_you_tube" />
 
     <CheckBox
         android:id="@+id/pendingPointsCheck"
-        android:layout_width="183dp"
-        android:layout_height="36dp"
+        android:layout_width="142dp"
+        android:layout_height="33dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="16dp"
@@ -47,8 +54,8 @@
 
     <CheckBox
         android:id="@+id/approvedPointsCheck"
-        android:layout_width="178dp"
-        android:layout_height="35dp"
+        android:layout_width="145dp"
+        android:layout_height="33dp"
         android:layout_marginBottom="28dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="16dp"
@@ -59,5 +66,55 @@
         app:layout_constraintHorizontal_bias="0.042"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/testPointsText"
+        android:layout_width="154dp"
+        android:layout_height="34dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/test_navigation"
+        android:textAppearance="@android:style/TextAppearance.Material"
+        app:layout_constraintBottom_toTopOf="@+id/spinner1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.908"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/upload__btn_img"
+        app:layout_constraintTop_toBottomOf="@+id/mapFragment"
+        app:layout_constraintVertical_bias="0.684" />
+
+    <TextView
+        android:id="@+id/uploadShelterText"
+        android:layout_width="98dp"
+        android:layout_height="41dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/insert_new_point"
+        android:textAppearance="@android:style/TextAppearance.Material"
+        app:layout_constraintBottom_toTopOf="@+id/pendingPointsCheck"
+        app:layout_constraintEnd_toStartOf="@+id/testPointsText"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/upload__btn_img"
+        app:layout_constraintTop_toBottomOf="@+id/mapFragment"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Spinner
+        android:id="@+id/listOfShelters"
+        android:layout_width="161dp"
+        android:layout_height="42dp"
+        android:layout_marginBottom="72dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="8dp"
+        android:background="@android:drawable/btn_dropdown"
+        android:spinnerMode="dropdown"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.829"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/pendingPointsCheck" />
 
 </android.support.constraint.ConstraintLayout>
