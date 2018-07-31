@@ -117,8 +117,22 @@ public class MainMenuActivity extends AppCompatActivity {
             approveEt.setKeyListener(null);
             declineEt.setKeyListener(null);
             collectEt.setKeyListener(null);
-
-        //}
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                showData(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 }

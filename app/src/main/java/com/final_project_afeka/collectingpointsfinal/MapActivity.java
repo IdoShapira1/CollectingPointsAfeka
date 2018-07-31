@@ -215,15 +215,12 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             .title(shelter.getAddress());
                     if(shelter.isApproved() == 1)
                     {
-
                         marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                         approvedMarkersList.add(mMap.addMarker(marker));
                     }else{
                         marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
                         pendingMarkersList.add(mMap.addMarker(marker));
                     }
-
-
                 }
                 addSheltersNavigation();
             }
@@ -342,7 +339,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             double lng = myMarker.getPosition().longitude;
             double lat = myMarker.getPosition().latitude;
             final String uID = mAuth.getCurrentUser().getUid();
-            Shelter shelter = new Shelter(uID,lng,lat,getCompleteAddressString(lat,lng),0);
+            Shelter shelter = new Shelter(uID,lng,lat,getCompleteAddressString(lat,lng),0,mAuth.getCurrentUser().getEmail());
 
             database.child("shelters").push().setValue(shelter);
             database.addListenerForSingleValueEvent(new ValueEventListener() {

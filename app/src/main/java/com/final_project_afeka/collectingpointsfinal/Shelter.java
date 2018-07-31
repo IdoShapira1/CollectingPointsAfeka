@@ -8,6 +8,7 @@ public class Shelter {
     private double lalatitudet;
     private String address;
     private int isApproved;
+    private String email;
 
     /**
      *  isApproved logic:
@@ -19,8 +20,9 @@ public class Shelter {
     public Shelter() {
     }
 
-    public Shelter(String uId, double longitude, double lalatitudet, String address, int isApproved) {
+    public Shelter(String uId, double longitude, double lalatitudet, String address, int isApproved , String email) {
         this.uId = uId;
+        this.email = email;
         this.longitude = longitude;
         this.lalatitudet = lalatitudet;
         this.address = address;
@@ -47,6 +49,8 @@ public class Shelter {
         isApproved = approved;
     }
 
+    public void setEmail(String email) { this.email = email; }
+
     public String getuId() {
         return uId;
     }
@@ -61,6 +65,10 @@ public class Shelter {
 
     public String getAddress() {
         return address;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public int isApproved() {

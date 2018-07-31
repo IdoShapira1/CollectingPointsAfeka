@@ -9,7 +9,6 @@
 
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.final_project_afeka.collectingpointsfinal.MapsFragment"
         class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="381dp"
         android:layout_height="377dp"
