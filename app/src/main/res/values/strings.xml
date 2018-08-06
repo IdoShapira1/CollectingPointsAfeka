@@ -13,6 +13,8 @@
     <string name="confirm">אישור</string>
     <string name="insert_password">הכנס סיסמה</string>
     <string name="insert_email">הכנס אימייל</string>
+    <string name="forgot_password">שכחת סיסמה?</string>
+    <string name="reset_password">אפס סיסמה</string>
 
     <string-array name="numbers">
         <item> </item>
