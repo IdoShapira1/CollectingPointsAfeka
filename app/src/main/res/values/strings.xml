@@ -10,6 +10,9 @@
     <string name="test_navigation">בדוק ניווט לנקודה מהמיקום הנוכחי</string>
     <string name="insert_new_point">הכנס נקודה חדשה</string>
     <string name="current_point">נקודת מחסה נוכחית</string>
+    <string name="confirm">אישור</string>
+    <string name="insert_password">הכנס סיסמה</string>
+    <string name="insert_email">הכנס אימייל</string>
 
     <string-array name="numbers">
         <item> </item>
