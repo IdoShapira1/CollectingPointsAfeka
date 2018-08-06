@@ -11,7 +11,7 @@
         android:id="@+id/mapFragment"
         class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="381dp"
-        android:layout_height="377dp"
+        android:layout_height="445dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -30,7 +30,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mapFragment"
-        app:layout_constraintVertical_bias="0.812"
+        app:layout_constraintVertical_bias="0.941"
         app:srcCompat="@android:drawable/ic_menu_upload_you_tube" />
 
     <CheckBox
@@ -45,11 +45,11 @@
         android:text="@string/pending_points"
         app:layout_constraintBottom_toTopOf="@+id/approvedPointsCheck"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.043"
+        app:layout_constraintHorizontal_bias="0.079"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.969" />
+        app:layout_constraintVertical_bias="0.987" />
 
     <CheckBox
         android:id="@+id/approvedPointsCheck"
@@ -71,17 +71,17 @@
         android:layout_width="154dp"
         android:layout_height="34dp"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="84dp"
         android:text="@string/test_navigation"
         android:textAppearance="@android:style/TextAppearance.Material"
-        app:layout_constraintBottom_toTopOf="@+id/spinner1"
+        app:layout_constraintBottom_toTopOf="@+id/listOfShelters"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.908"
+        app:layout_constraintHorizontal_bias="0.83"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toEndOf="@+id/upload__btn_img"
         app:layout_constraintTop_toBottomOf="@+id/mapFragment"
-        app:layout_constraintVertical_bias="0.684" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/uploadShelterText"
@@ -104,7 +104,7 @@
         android:id="@+id/listOfShelters"
         android:layout_width="161dp"
         android:layout_height="42dp"
-        android:layout_marginBottom="72dp"
+        android:layout_marginBottom="28dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="16dp"
         android:layout_marginStart="8dp"
@@ -112,8 +112,22 @@
         android:spinnerMode="dropdown"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.829"
+        app:layout_constraintHorizontal_bias="0.703"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toEndOf="@+id/pendingPointsCheck" />
+
+    <TextView
+        android:id="@+id/currentPointText"
+        android:layout_width="201dp"
+        android:layout_height="22dp"
+        android:layout_marginBottom="56dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/current_point"
+        app:layout_constraintBottom_toTopOf="@+id/testPointsText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

@@ -16,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -52,6 +53,7 @@ import android.os.AsyncTask;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -83,6 +85,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private CheckBox pendingCheckBox,approvedCheckBox;
     private Polyline polyline;
     private int spinnerCheck = 0;
+    private TextView currentPoint;
 
 
     @Override
@@ -97,6 +100,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         uploadBtn = (ImageButton)findViewById(R.id.upload__btn_img);
         spinner = (Spinner) findViewById(R.id.listOfShelters);
+        currentPoint = (TextView) findViewById(R.id.currentPointText);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mapFragment);
         mapFragment.getMapAsync(this);
@@ -192,13 +196,38 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     myMarker = googleMap.addMarker(new MarkerOptions()
                             .position(latLng)
                             .title("הכנס מקום בטוח")
+                            .draggable(true)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.shelter_red))
                             .snippet("Your marker snippet"));
                 } else {
                     // Marker already exists, just update it's position
                     myMarker.setPosition(latLng);
+
                 }
+                currentPoint.setText(getCompleteAddressString(myMarker.getPosition().latitude,myMarker.getPosition().longitude));
             }
         });
+
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker arg0) {
+                // TODO Auto-generated method stub
+            }
+            @SuppressWarnings("unchecked")
+            @Override
+            public void onMarkerDragEnd(Marker arg0) {
+                // TODO Auto-generated method stub
+                Log.d("System out", "onMarkerDragEnd..."+arg0.getPosition().latitude+"..."+arg0.getPosition().longitude);
+                currentPoint.setText(getCompleteAddressString(myMarker.getPosition().latitude,myMarker.getPosition().longitude));
+                mMap.animateCamera(CameraUpdateFactory.newLatLng(arg0.getPosition()));
+            }
+            @Override
+            public void onMarkerDrag(Marker arg0) {
+                // TODO Auto-generated method stub
+            }
+        });
+
+
 
 
     }
@@ -215,10 +244,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             .title(shelter.getAddress());
                     if(shelter.isApproved() == 1)
                     {
-                        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.shelter_green));
                         approvedMarkersList.add(mMap.addMarker(marker));
                     }else{
-                        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+                        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.shelter_yellow));
                         pendingMarkersList.add(mMap.addMarker(marker));
                     }
                 }
