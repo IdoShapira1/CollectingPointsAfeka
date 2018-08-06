@@ -4,14 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/wallpaper"
     tools:context=".MainMenuActivity">
 
     <EditText
         android:id="@+id/nameMainActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="63dp"
-        android:layout_marginTop="119dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="92dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Name"
@@ -22,7 +23,7 @@
         android:id="@+id/collectedMainActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="43dp"
+        android:layout_marginTop="44dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="pointscollected"
@@ -33,11 +34,12 @@
         android:id="@+id/approvedMainActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="57dp"
+        android:layout_marginTop="52dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="pointsapproved"
         app:layout_constraintEnd_toEndOf="@+id/collectedMainActivity"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/collectedMainActivity"
         app:layout_constraintTop_toBottomOf="@+id/collectedMainActivity" />
 
@@ -46,12 +48,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="145dp"
-        android:layout_marginStart="69dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="pointsdeclined"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/approvedMainActivity"
+        app:layout_constraintVertical_bias="0.632" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingPopupMenu"
