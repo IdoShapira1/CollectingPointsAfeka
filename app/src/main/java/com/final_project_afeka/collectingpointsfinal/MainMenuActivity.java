@@ -1,6 +1,7 @@
 package com.final_project_afeka.collectingpointsfinal;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -87,6 +88,7 @@ public class MainMenuActivity extends AppCompatActivity {
 
     private void showData(DataSnapshot dataSnapshot) {
         DataSnapshot data_user;
+
         String uID = mAuth.getCurrentUser().getUid();
         data_user=dataSnapshot.child("users").child(uID);
             user = new User();
@@ -110,9 +112,9 @@ public class MainMenuActivity extends AppCompatActivity {
                 user.setPointsDeclined(data_user.getValue(User.class).getPointsDeclined());
             }
             nameET.setText(user.getEmail());
-            approveEt.setText(("Points approved "+user.getPointsApproved()));
-            declineEt.setText("Points declined "+user.getPointsDeclined());
-            collectEt.setText("points collected "+user.getPointsCollected());
+            approveEt.setText((user.getPointsApproved()+getResources().getString(R.string.points_approved)));
+            declineEt.setText(user.getPointsDeclined()+getResources().getString(R.string.points_declined));
+            collectEt.setText(user.getPointsCollected()+getResources().getString(R.string.points_collected));
             nameET.setKeyListener(null);
             approveEt.setKeyListener(null);
             declineEt.setKeyListener(null);

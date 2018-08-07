@@ -1,12 +1,12 @@
 <resources>
-    <string name="app_name">CollectingPointsFinal</string>
+    <string name="app_name">Collecting Shelter Points</string>
     <string name="insert_points_popup">מסך הזנת נקודות</string>
     <string name="admin_popup"> מסך אישור נקודות אדמין</string>
     <string name="insert_point">Insert Point</string>
     <string name="google_map_api">AIzaSyBNGthAXVuFNlo3EfMRMq_Ei7fKr9U8TnY</string>
     <string name="title_activity_maps_fragment">Map</string>
-    <string name="approved_points">הצג נקודות שאושרו</string>
-    <string name="pending_points">הצג נקודות שטרם אושרו</string>
+    <string name="show_approved_points">הצג נקודות שאושרו</string>
+    <string name="show_pending_points">הצג נקודות שטרם אושרו</string>
     <string name="test_navigation">בדוק ניווט לנקודה מהמיקום הנוכחי</string>
     <string name="insert_new_point">הכנס נקודה חדשה</string>
     <string name="current_point">נקודת מחסה נוכחית</string>
@@ -15,12 +15,11 @@
     <string name="insert_email">הכנס אימייל</string>
     <string name="forgot_password">שכחת סיסמה?</string>
     <string name="reset_password">אפס סיסמה</string>
+    <string name="name">שם</string>
+    <string name="points_collected">נקודות שנאספו</string>
+    <string name="points_approved">נקודות שאושרו</string>
+    <string name="points_declined">נקודות שנדחו</string>
 
-    <string-array name="numbers">
-        <item> </item>
-        <item> One</item>
-        <item> Two</item>
-    </string-array>
 
 
 </resources>
