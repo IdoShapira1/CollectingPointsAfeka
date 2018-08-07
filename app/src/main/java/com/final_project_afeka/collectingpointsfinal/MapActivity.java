@@ -129,14 +129,18 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 // Here you get the current item (a User object) that is selected by its position
 
                 if(++spinnerCheck > 1) {
-                    Marker mark = (Marker) spinner.getSelectedItem();
-                    LatLng origin = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
-                    LatLng dest = new LatLng(mark.getPosition().latitude, mark.getPosition().longitude);
-                    //getting URL to the Google direction API
-                    String url = getDirectionsUrl(origin, dest);
-                    DownloadTask downloadTask = new DownloadTask();
-                    // Start downloading json data from Google Directions API
-                    downloadTask.execute(url);
+                    try {
+                        Marker mark = (Marker) spinner.getSelectedItem();
+                        LatLng origin = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+                        LatLng dest = new LatLng(mark.getPosition().latitude, mark.getPosition().longitude);
+                        //getting URL to the Google direction API
+                        String url = getDirectionsUrl(origin, dest);
+                        DownloadTask downloadTask = new DownloadTask();
+                        // Start downloading json data from Google Directions API
+                        downloadTask.execute(url);
+                    } catch(Exception e){
+                        Toast.makeText(getApplicationContext(), "אנא הדלק רכיב GPS לפני בדיקת ניווט", Toast.LENGTH_LONG).show();
+                    }
                 }
 
             }
@@ -198,7 +202,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             .title("הכנס מקום בטוח")
                             .draggable(true)
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.shelter_red))
-                            .snippet("Your marker snippet"));
+                            .snippet(""));
                 } else {
                     // Marker already exists, just update it's position
                     myMarker.setPosition(latLng);
