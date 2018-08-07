@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,6 +52,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 import org.w3c.dom.Text;
@@ -86,6 +88,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Polyline polyline;
     private int spinnerCheck = 0;
     private TextView currentPoint;
+    private ImageView streetView;
 
 
     @Override
@@ -101,6 +104,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         uploadBtn = (ImageButton)findViewById(R.id.upload__btn_img);
         spinner = (Spinner) findViewById(R.id.listOfShelters);
         currentPoint = (TextView) findViewById(R.id.currentPointText);
+        streetView = (ImageView) findViewById(R.id.streetView);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mapFragment);
         mapFragment.getMapAsync(this);
@@ -208,7 +212,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     myMarker.setPosition(latLng);
 
                 }
-                currentPoint.setText(getCompleteAddressString(myMarker.getPosition().latitude,myMarker.getPosition().longitude));
+                setStreetViewImage();
             }
         });
 
@@ -220,10 +224,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @SuppressWarnings("unchecked")
             @Override
             public void onMarkerDragEnd(Marker arg0) {
-                // TODO Auto-generated method stub
-                Log.d("System out", "onMarkerDragEnd..."+arg0.getPosition().latitude+"..."+arg0.getPosition().longitude);
-                currentPoint.setText(getCompleteAddressString(myMarker.getPosition().latitude,myMarker.getPosition().longitude));
-                mMap.animateCamera(CameraUpdateFactory.newLatLng(arg0.getPosition()));
+                setStreetViewImage();
             }
             @Override
             public void onMarkerDrag(Marker arg0) {
@@ -233,6 +234,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
 
 
+
+    }
+
+    private void setStreetViewImage(){
+        String imageURL;
+        imageURL = "https://maps.googleapis.com/maps/api/streetview?size=400x400&location="+myMarker.getPosition().latitude+","+myMarker.getPosition().longitude+"&fov=90&heading=235&pitch=10";
+        Picasso.get().load(imageURL).into(streetView);
+        currentPoint.setText(getCompleteAddressString(myMarker.getPosition().latitude,myMarker.getPosition().longitude));
 
     }
 
