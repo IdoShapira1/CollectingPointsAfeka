@@ -25,7 +25,6 @@ public class AdminShelterAdpter extends ArrayAdapter<Shelter> {
 
     private Context mContext;
     private int mResource;
-    private int lastPosition = -1;
     private ArrayList<Shelter> pendingSheltersList;
     private ArrayList<Marker> pendingMarkersList;
     private ArrayList<String> shelterIdPending;
@@ -71,6 +70,7 @@ public class AdminShelterAdpter extends ArrayAdapter<Shelter> {
                 approvePoint(shelterId ,pendingMarkersList.get(position), getItem(position).getuId());
                 Toast.makeText(mContext,"מחסה אושר",Toast.LENGTH_LONG).show();
                 pendingSheltersList.remove(position);
+                notifyDataSetChanged();
             }
         });
         bt_delete.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +80,7 @@ public class AdminShelterAdpter extends ArrayAdapter<Shelter> {
                 DeclinePoint(shelterId ,pendingMarkersList.get(position), getItem(position).getuId());
                 Toast.makeText(mContext,"מחסה לא אושר",Toast.LENGTH_LONG).show();
                 pendingSheltersList.remove(position);
+                notifyDataSetChanged();
             }
         });
 

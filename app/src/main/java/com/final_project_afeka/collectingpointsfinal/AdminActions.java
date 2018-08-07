@@ -78,6 +78,15 @@ public class AdminActions extends AppCompatActivity implements OnMapReadyCallbac
                 moveCamera(shelter.getLalatitudet(),shelter.getLongitude());
             }
         });
+        listView.setClickable(true);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0)
+                    Log.d(TAG, "onItemClick: position = "+position);
+                //moveCamera(pendingShelterList.get(position).getLalatitudet(),pendingShelterList.get(position).getLongitude());
+            }
+        });
     }
 
     @Override
@@ -184,8 +193,8 @@ public class AdminActions extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
-    public void moveCamera(double lalatitudet, double longitude)
+    public void moveCamera(double latitude, double longitude)
     {
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lalatitudet, longitude), DEFAULT_ZOOM));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), DEFAULT_ZOOM));
     }
 }
