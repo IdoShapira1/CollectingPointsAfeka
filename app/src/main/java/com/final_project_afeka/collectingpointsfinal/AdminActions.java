@@ -64,7 +64,7 @@ public class AdminActions extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.mapFragmentAdmin);
         mapFragment.getMapAsync(this);
         addSheltersMarkers();
-        adapter = new AdminShelterAdpter(this,R.layout.adpter_view_layout, pendingShelterList, pendingMarkersList, shelterIdPending);
+        adapter = new AdminShelterAdpter(this,R.layout.adpter_view_layout, pendingShelterList, pendingMarkersList, shelterIdPending, mMap);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
     }
@@ -72,6 +72,7 @@ public class AdminActions extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
+        adapter.setMap(mMap);
         // prompt the user for permission
         getLocationPermission();
         // Turn on the My Location layer and the related control on the map.
@@ -163,7 +164,7 @@ public class AdminActions extends AppCompatActivity implements OnMapReadyCallbac
                         marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.shelter_yellow));
                         pendingMarkersList.add(mMap.addMarker(marker));
                         pendingShelterList.add(shelter);
-
+                        moveCamera(shelter.getLalatitudet(),shelter.getLongitude());
                     }
                     adapter.notifyDataSetChanged();
                 }

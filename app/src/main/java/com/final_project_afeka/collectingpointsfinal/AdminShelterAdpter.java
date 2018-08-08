@@ -10,8 +10,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,7 +39,7 @@ public class AdminShelterAdpter extends ArrayAdapter<Shelter> {
      * @param resource
      * @param pendingSheltersList
      */
-    public AdminShelterAdpter(Context context, int resource , ArrayList<Shelter> pendingSheltersList, ArrayList<Marker> pendingMarkersList, ArrayList<String> shelterIdPending )
+    public AdminShelterAdpter(Context context, int resource , ArrayList<Shelter> pendingSheltersList, ArrayList<Marker> pendingMarkersList, ArrayList<String> shelterIdPending ,GoogleMap mMap)
     {
         super(context, resource, pendingSheltersList);
         mContext = context;
@@ -45,6 +47,7 @@ public class AdminShelterAdpter extends ArrayAdapter<Shelter> {
         this.pendingSheltersList=pendingSheltersList;
         this.pendingMarkersList=pendingMarkersList;
         this.shelterIdPending = shelterIdPending;
+        this.mMap = mMap;
     }
 
     @NonNull
@@ -81,6 +84,14 @@ public class AdminShelterAdpter extends ArrayAdapter<Shelter> {
                 Toast.makeText(mContext,"מחסה לא אושר",Toast.LENGTH_LONG).show();
                 pendingSheltersList.remove(position);
                 notifyDataSetChanged();
+            }
+        });
+        tx_address.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                double lat = pendingSheltersList.get(position).getLalatitudet();
+                double lang = pendingSheltersList.get(position).getLongitude();
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lat,lang)));
             }
         });
 
@@ -128,15 +139,9 @@ public class AdminShelterAdpter extends ArrayAdapter<Shelter> {
 
     }
 
-    @Override
-    public boolean areAllItemsEnabled() {
-        return true;
+
+
+    public void setMap(GoogleMap map) {
+        this.mMap = map;
     }
-
-    @Override
-    public boolean isEnabled(int position) {
-        return true;
-    }
-
-
 }
