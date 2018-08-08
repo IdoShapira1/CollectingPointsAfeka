@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -91,7 +92,8 @@ public class AdminShelterAdpter extends ArrayAdapter<Shelter> {
             public void onClick(View v) {
                 double lat = pendingSheltersList.get(position).getLalatitudet();
                 double lang = pendingSheltersList.get(position).getLongitude();
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(lat,lang)));
+                CameraUpdate location =CameraUpdateFactory.newLatLng(new LatLng(lat,lang));
+                mMap.animateCamera(location);
             }
         });
 
