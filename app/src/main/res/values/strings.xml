@@ -19,7 +19,13 @@
     <string name="points_collected">נקודות שנאספו</string>
     <string name="points_approved">נקודות שאושרו</string>
     <string name="points_declined">נקודות שנדחו</string>
-
+    <string name="invalid_mail">כתובת המייל לא חוקית אנא הכנס כתובת חוקית</string>
+    <string name="must_enter_user_and_password">אתה חייב להכניס אימייל וסיסמא</string>
+    <string name="reset_pass_success">נשלח לך מייל לאיפוס סיסמא!</string>
+    <string name="reset_pass_failed">כתובת המייל לא קיימת במערכת</string>
+    <string name="reset_pass_no_mail">אתה חייב להכניס אימייל</string>
+    <string name="login_failed">אימייל או סיסמא לא נכונים</string>
+    <string name="admin_failed">רק משתמש מורשה יכול להיכנס</string>
 
 
 </resources>

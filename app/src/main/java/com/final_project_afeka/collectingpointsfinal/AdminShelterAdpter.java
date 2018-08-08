@@ -86,7 +86,6 @@ public class AdminShelterAdpter extends ArrayAdapter<Shelter> {
 
         tx_address.setText(address);
         tx_email.setText(email);
-
         return convertView;
 
 
@@ -127,6 +126,16 @@ public class AdminShelterAdpter extends ArrayAdapter<Shelter> {
         });
 
 
+    }
+
+    @Override
+    public boolean areAllItemsEnabled() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled(int position) {
+        return true;
     }
 
 

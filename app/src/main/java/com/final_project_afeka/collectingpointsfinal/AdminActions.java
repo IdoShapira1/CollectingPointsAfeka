@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -37,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class AdminActions extends AppCompatActivity implements OnMapReadyCallback{
+public class AdminActions extends AppCompatActivity implements OnMapReadyCallback,AdapterView.OnItemClickListener {
     private static final String TAG = AdminActions.class.getSimpleName();
     GoogleMap mMap;
     private Location mLastKnownLocation;
@@ -51,6 +52,7 @@ public class AdminActions extends AppCompatActivity implements OnMapReadyCallbac
     private ArrayList<Shelter> pendingShelterList = new ArrayList<>();
     private ArrayList<String> shelterIdPending = new ArrayList<>();
     final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+    AdminShelterAdpter adapter;
     ListView listView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,31 +64,9 @@ public class AdminActions extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.mapFragmentAdmin);
         mapFragment.getMapAsync(this);
         addSheltersMarkers();
-        final AdminShelterAdpter adapter = new AdminShelterAdpter(this,R.layout.adpter_view_layout, pendingShelterList, pendingMarkersList, shelterIdPending);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                listView.setAdapter(adapter);
-
-            }
-        },4000);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Shelter shelter = (Shelter) parent.getItemAtPosition(position);
-                Log.d(TAG, "onItemClick: latitudet"+shelter.getLalatitudet());
-                moveCamera(shelter.getLalatitudet(),shelter.getLongitude());
-            }
-        });
-        listView.setClickable(true);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0)
-                    Log.d(TAG, "onItemClick: position = "+position);
-                //moveCamera(pendingShelterList.get(position).getLalatitudet(),pendingShelterList.get(position).getLongitude());
-            }
-        });
+        adapter = new AdminShelterAdpter(this,R.layout.adpter_view_layout, pendingShelterList, pendingMarkersList, shelterIdPending);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(this);
     }
 
     @Override
@@ -183,7 +163,9 @@ public class AdminActions extends AppCompatActivity implements OnMapReadyCallbac
                         marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.shelter_yellow));
                         pendingMarkersList.add(mMap.addMarker(marker));
                         pendingShelterList.add(shelter);
+
                     }
+                    adapter.notifyDataSetChanged();
                 }
             }
             @Override
@@ -196,5 +178,10 @@ public class AdminActions extends AppCompatActivity implements OnMapReadyCallbac
     public void moveCamera(double latitude, double longitude)
     {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), DEFAULT_ZOOM));
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Toast.makeText(AdminActions.this, "You Clicked at "+position, Toast.LENGTH_SHORT).show();
     }
 }

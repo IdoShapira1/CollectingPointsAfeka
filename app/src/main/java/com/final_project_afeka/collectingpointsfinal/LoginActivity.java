@@ -17,6 +17,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class LoginActivity extends AppCompatActivity {
 
     private EditText email;
@@ -46,19 +49,35 @@ public class LoginActivity extends AppCompatActivity {
         forgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(LoginActivity.this, PasswordActivity.class));
+                String useremail = email.getText().toString().trim();
+
+                if (useremail.equals(""))
+                    Toast.makeText(LoginActivity.this, R.string.reset_pass_no_mail, Toast.LENGTH_SHORT).show();
+                else if (!isEmailValid(useremail))
+                    Toast.makeText(getApplicationContext(),R.string.invalid_mail,Toast.LENGTH_LONG).show();
+                else {
+                    mAuth.sendPasswordResetEmail(useremail).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(LoginActivity.this, R.string.reset_pass_success, Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(LoginActivity.this, R.string.reset_pass_failed, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
             }
         });
-
-
-
     }
 
     public void authenticateLogin(){
         String emailInserted = email.getText().toString();
         String passwordInserted = password.getText().toString();
         if(emailInserted.isEmpty() || passwordInserted.isEmpty())
-            Toast.makeText(getApplicationContext(),"YOU BAD!",Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),R.string.must_enter_user_and_password,Toast.LENGTH_LONG).show();
+        else if (!isEmailValid(emailInserted))
+            Toast.makeText(getApplicationContext(),R.string.invalid_mail,Toast.LENGTH_LONG).show();
         else{
             mAuth.signInWithEmailAndPassword(emailInserted,passwordInserted).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
@@ -71,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         // If sign in fails, display a message to the user.
                         //     Log.w(TAG, "signInWithEmail:failure", task.getException());
-                        Toast.makeText(getApplicationContext(),"Wrong password inserted",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),R.string.login_failed,Toast.LENGTH_LONG).show();
                     }
 
                 }
@@ -87,5 +106,11 @@ public class LoginActivity extends AppCompatActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         //updateUI(currentUser);
+    }
+    public static boolean isEmailValid(String email) {
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 }

@@ -5,10 +5,12 @@ import android.content.res.Resources;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -18,7 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class MainMenuActivity extends AppCompatActivity {
-
+    private static final String TAG = MainMenuActivity.class.getSimpleName();
     private User user;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
@@ -27,6 +29,7 @@ public class MainMenuActivity extends AppCompatActivity {
     private EditText approveEt;
     private EditText declineEt;
     private FloatingActionButton floatMenu;
+    boolean finishReadFromDB = false;
 
 
 
@@ -40,7 +43,7 @@ public class MainMenuActivity extends AppCompatActivity {
         approveEt = (EditText) findViewById(R.id.approvedMainActivity);
         declineEt = (EditText) findViewById(R.id.declinedPointsActivity);
         floatMenu = (FloatingActionButton)findViewById(R.id.floatingPopupMenu);
-
+        pullUserData();
         floatMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,9 +58,12 @@ public class MainMenuActivity extends AppCompatActivity {
                                 startActivity(new Intent(MainMenuActivity.this,MapActivity.class));
                                 break;
                             case 1:
-                                startActivity(new Intent(MainMenuActivity.this,AdminActions.class));
+                                if (finishReadFromDB)
+                                    if (user.getIsAdmin() == 0 )
+                                        Toast.makeText(getApplicationContext(),R.string.admin_failed,Toast.LENGTH_LONG).show();
+                                    else
+                                        startActivity(new Intent(MainMenuActivity.this,AdminActions.class));
                                 break;
-
                         }
                         return true;
                     }
@@ -67,7 +73,6 @@ public class MainMenuActivity extends AppCompatActivity {
 
             }
         });
-        pullUserData();
     }
 
     void pullUserData(){
@@ -76,6 +81,7 @@ public class MainMenuActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 showData(dataSnapshot);
+                finishReadFromDB = true;
             }
 
             @Override
@@ -91,34 +97,35 @@ public class MainMenuActivity extends AppCompatActivity {
 
         String uID = mAuth.getCurrentUser().getUid();
         data_user=dataSnapshot.child("users").child(uID);
-            user = new User();
-            if(data_user== null){ // create user if doesn't exist yet
-                mDatabase.child("users").child(uID).child("email").setValue(mAuth.getCurrentUser().getEmail());
-                mDatabase.child("users").child(uID).child("isAdmin").setValue(0);
-                mDatabase.child("users").child(uID).child("pointsApproved").setValue(0);
-                mDatabase.child("users").child(uID).child("pointsCollected").setValue(0);
-                mDatabase.child("users").child(uID).child("pointsDeclined").setValue(0);
-                user.setEmail(mAuth.getCurrentUser().getEmail());
-                user.setIsAdmin(0);
-                user.setPointsApproved(0);
-                user.setPointsCollected(0);
-                user.setPointsDeclined(0);
+        Log.d(TAG, "showData: data_user : "+data_user);
+        user = new User();
+        if(data_user.getValue() == null){ // create user if doesn't exist yet
+            mDatabase.child("users").child(uID).child("email").setValue(mAuth.getCurrentUser().getEmail());
+            mDatabase.child("users").child(uID).child("isAdmin").setValue(0);
+            mDatabase.child("users").child(uID).child("pointsApproved").setValue(0);
+            mDatabase.child("users").child(uID).child("pointsCollected").setValue(0);
+            mDatabase.child("users").child(uID).child("pointsDeclined").setValue(0);
+            user.setEmail(mAuth.getCurrentUser().getEmail());
+            user.setIsAdmin(0);
+            user.setPointsApproved(0);
+            user.setPointsCollected(0);
+            user.setPointsDeclined(0);
 
-            }else { // fetch user
-                user.setEmail(data_user.getValue(User.class).getEmail());
-                user.setIsAdmin(data_user.getValue(User.class).getIsAdmin());
-                user.setPointsApproved(data_user.getValue(User.class).getPointsApproved());
-                user.setPointsCollected(data_user.getValue(User.class).getPointsCollected());
-                user.setPointsDeclined(data_user.getValue(User.class).getPointsDeclined());
-            }
-            nameET.setText(user.getEmail());
-            approveEt.setText((user.getPointsApproved()+getResources().getString(R.string.points_approved)));
-            declineEt.setText(user.getPointsDeclined()+getResources().getString(R.string.points_declined));
-            collectEt.setText(user.getPointsCollected()+getResources().getString(R.string.points_collected));
-            nameET.setKeyListener(null);
-            approveEt.setKeyListener(null);
-            declineEt.setKeyListener(null);
-            collectEt.setKeyListener(null);
+        }else { // fetch user
+            user.setEmail(data_user.getValue(User.class).getEmail());
+            user.setIsAdmin(data_user.getValue(User.class).getIsAdmin());
+            user.setPointsApproved(data_user.getValue(User.class).getPointsApproved());
+            user.setPointsCollected(data_user.getValue(User.class).getPointsCollected());
+            user.setPointsDeclined(data_user.getValue(User.class).getPointsDeclined());
+        }
+        nameET.setText(user.getEmail());
+        approveEt.setText((user.getPointsApproved()+getResources().getString(R.string.points_approved)));
+        declineEt.setText(user.getPointsDeclined()+getResources().getString(R.string.points_declined));
+        collectEt.setText(user.getPointsCollected()+getResources().getString(R.string.points_collected));
+        nameET.setKeyListener(null);
+        approveEt.setKeyListener(null);
+        declineEt.setKeyListener(null);
+        collectEt.setKeyListener(null);
     }
 
     @Override
