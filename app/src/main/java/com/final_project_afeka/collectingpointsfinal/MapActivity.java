@@ -242,7 +242,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         imageURL = "https://maps.googleapis.com/maps/api/streetview?size=400x400&location="+myMarker.getPosition().latitude+","+myMarker.getPosition().longitude+"&fov=90&heading=235&pitch=10";
         Picasso.get().load(imageURL).into(streetView);
         currentPoint.setText(getCompleteAddressString(myMarker.getPosition().latitude,myMarker.getPosition().longitude));
-
     }
 
     private void addSheltersMarkers(){
@@ -312,6 +311,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                         new LatLng(mLastKnownLocation.getLatitude(),
                                                 mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
                             }catch (NullPointerException e){
+                                //lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
                                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
                                 mMap.getUiSettings().setMyLocationButtonEnabled(false);
                             }
