@@ -119,9 +119,9 @@ public class MainMenuActivity extends AppCompatActivity {
             user.setPointsDeclined(data_user.getValue(User.class).getPointsDeclined());
         }
         nameET.setText(user.getEmail());
-        approveEt.setText((user.getPointsApproved()+getResources().getString(R.string.points_approved)));
-        declineEt.setText(user.getPointsDeclined()+getResources().getString(R.string.points_declined));
-        collectEt.setText(user.getPointsCollected()+getResources().getString(R.string.points_collected));
+        approveEt.setText((getResources().getString(R.string.points_approved)+" "+user.getPointsApproved()));
+        declineEt.setText(getResources().getString(R.string.points_declined)+" "+user.getPointsDeclined());
+        collectEt.setText(getResources().getString(R.string.points_collected)+" "+user.getPointsCollected());
         nameET.setKeyListener(null);
         approveEt.setKeyListener(null);
         declineEt.setKeyListener(null);

@@ -205,7 +205,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             .position(latLng)
                             .title("הכנס מקום בטוח")
                             .draggable(true)
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.shelter_red))
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.red_shelter2))
                             .snippet(""));
                 } else {
                     // Marker already exists, just update it's position
@@ -228,7 +228,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
             @Override
             public void onMarkerDrag(Marker arg0) {
-                // TODO Auto-generated method stub
+                 //TODO Auto-generated method stub
             }
         });
 
@@ -257,10 +257,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             .title(shelter.getAddress());
                     if(shelter.isApproved() == 1)
                     {
-                        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.shelter_green));
+                        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter2));
                         approvedMarkersList.add(mMap.addMarker(marker));
                     }else{
-                        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.shelter_yellow));
+                        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_shelter2));
                         pendingMarkersList.add(mMap.addMarker(marker));
                     }
                 }

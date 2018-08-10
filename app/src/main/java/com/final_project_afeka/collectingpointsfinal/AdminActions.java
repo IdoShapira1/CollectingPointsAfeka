@@ -151,19 +151,19 @@ public class AdminActions extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    shelterIdPending.add(snapshot.getKey());
                     Shelter shelter = snapshot.getValue(Shelter.class);
                     MarkerOptions marker = new MarkerOptions()
                             .position(new LatLng(shelter.getLalatitudet(), shelter.getLongitude()))
                             .title(shelter.getAddress());
                     if(shelter.isApproved() == 1)
                     {
-                        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.shelter_green));
+                        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter2));
                         mMap.addMarker(marker);
                     }else{
-                        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.shelter_yellow));
+                        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_shelter2));
                         pendingMarkersList.add(mMap.addMarker(marker));
                         pendingShelterList.add(shelter);
+                        shelterIdPending.add(snapshot.getKey());
                         moveCamera(shelter.getLalatitudet(),shelter.getLongitude());
                     }
                     adapter.notifyDataSetChanged();

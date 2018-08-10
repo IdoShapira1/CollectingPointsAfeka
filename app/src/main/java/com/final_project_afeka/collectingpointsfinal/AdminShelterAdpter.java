@@ -2,6 +2,7 @@ package com.final_project_afeka.collectingpointsfinal;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class AdminShelterAdpter extends ArrayAdapter<Shelter> {
-
+    private static final String TAG = AdminShelterAdpter.class.getSimpleName();
     private Context mContext;
     private int mResource;
     private ArrayList<Shelter> pendingSheltersList;
@@ -70,7 +71,8 @@ public class AdminShelterAdpter extends ArrayAdapter<Shelter> {
             @Override
             public void onClick(View v) {
                 String shelterId = shelterIdPending.get(position);
-                pendingMarkersList.get(position).setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                pendingMarkersList.get(position).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter2));
+                Log.d(TAG, "onClick: shelter id: "+shelterId);
                 approvePoint(shelterId ,pendingMarkersList.get(position), getItem(position).getuId());
                 Toast.makeText(mContext,"מחסה אושר",Toast.LENGTH_LONG).show();
                 pendingSheltersList.remove(position);
@@ -81,6 +83,7 @@ public class AdminShelterAdpter extends ArrayAdapter<Shelter> {
             @Override
             public void onClick(View v) {
                 String shelterId = shelterIdPending.get(position);
+                Log.d(TAG, "onClick: shelter Id "+shelterId);
                 DeclinePoint(shelterId ,pendingMarkersList.get(position), getItem(position).getuId());
                 Toast.makeText(mContext,"מחסה לא אושר",Toast.LENGTH_LONG).show();
                 pendingSheltersList.remove(position);
@@ -105,7 +108,7 @@ public class AdminShelterAdpter extends ArrayAdapter<Shelter> {
     }
 
     private void approvePoint(final String shelterId, Marker marker, final String uID) {
-        marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter2));
         database.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
