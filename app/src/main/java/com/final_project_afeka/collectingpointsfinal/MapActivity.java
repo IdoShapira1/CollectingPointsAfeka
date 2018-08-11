@@ -210,7 +210,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         updateLocationUI();
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
-
+        mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {

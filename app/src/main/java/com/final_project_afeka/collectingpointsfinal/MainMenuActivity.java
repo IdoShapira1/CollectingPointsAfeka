@@ -93,7 +93,6 @@ public class MainMenuActivity extends AppCompatActivity {
 
     private void showData(DataSnapshot dataSnapshot) {
         DataSnapshot data_user;
-
         String uID = mAuth.getCurrentUser().getUid();
         data_user=dataSnapshot.child("users").child(uID);
         Log.d(TAG, "showData: data_user : "+data_user);
@@ -109,7 +108,6 @@ public class MainMenuActivity extends AppCompatActivity {
             user.setPointsApproved(0);
             user.setPointsCollected(0);
             user.setPointsDeclined(0);
-
         }else { // fetch user
             user.setEmail(data_user.getValue(User.class).getEmail());
             user.setIsAdmin(data_user.getValue(User.class).getIsAdmin());
