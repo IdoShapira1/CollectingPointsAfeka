@@ -51,11 +51,10 @@
 
     <CheckBox
         android:id="@+id/approvedPointsCheck"
-        android:layout_width="142dp"
+        android:layout_width="138dp"
         android:layout_height="33dp"
         android:layout_marginBottom="28dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginStart="8dp"
         android:text="@string/show_approved_points"
         app:layout_constraintBottom_toBottomOf="parent"
