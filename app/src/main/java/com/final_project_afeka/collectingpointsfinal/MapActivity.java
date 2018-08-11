@@ -22,8 +22,6 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.GeoDataClient;
@@ -46,19 +44,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
 import android.graphics.Color;
 import android.os.AsyncTask;
-
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.squareup.picasso.Picasso;
-
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -203,7 +196,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
-
         // prompt the user for permission
         getLocationPermission();
         // Turn on the My Location layer and the related control on the map.
@@ -247,10 +239,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 //TODO Auto-generated method stub
             }
         });
-
-
-
-
     }
 
     private void setStreetViewImage(){
@@ -513,25 +501,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     private String getDirectionsUrl(LatLng origin, LatLng dest) {
-
         // Origin of route
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
-
         // Destination of route
         String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
-
         // Sensor enabled
         String sensor = "sensor=true";
         String mode = "mode=walking";
         // Building the parameters to the web service
         String parameters = str_origin + "&" + str_dest + "&" + sensor + "&" + mode;
-
         // Output format
         String output = "json";
-
         // Building the url to the web service
         String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
-
         return url;
     }
 
@@ -573,20 +555,3 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return data;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

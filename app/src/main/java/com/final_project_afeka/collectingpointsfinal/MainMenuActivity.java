@@ -1,5 +1,4 @@
 package com.final_project_afeka.collectingpointsfinal;
-
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -10,7 +9,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.Toast;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,7 +27,6 @@ public class MainMenuActivity extends AppCompatActivity {
     private EditText declineEt;
     private FloatingActionButton floatMenu;
     boolean finishReadFromDB = false;
-
 
 
     @Override

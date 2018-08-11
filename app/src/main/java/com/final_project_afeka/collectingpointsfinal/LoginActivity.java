@@ -23,14 +23,15 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText email;
     private EditText password;
-    private Button confirm;
+
     private FirebaseAuth mAuth;
-    private TextView forgotPassword;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Button confirm;
+        TextView forgotPassword;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         email = (EditText) findViewById(R.id.emailLoginActivity);
@@ -95,8 +96,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
         }
-
-
     }
 
     @Override
@@ -104,7 +103,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        //updateUI(currentUser);
     }
     public static boolean isEmailValid(String email) {
         String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";

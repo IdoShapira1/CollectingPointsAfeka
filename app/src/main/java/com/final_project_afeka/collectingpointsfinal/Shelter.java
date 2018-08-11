@@ -1,6 +1,5 @@
 package com.final_project_afeka.collectingpointsfinal;
 
-
 public class Shelter {
 
     private String uId;
