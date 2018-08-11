@@ -1,5 +1,7 @@
 package com.final_project_afeka.collectingpointsfinal;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -55,7 +58,6 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -70,6 +72,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     GoogleMap mMap;
     Marker myMarker = null;
+    Marker destMarker = null;
     private FirebaseAuth mAuth;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int DEFAULT_ZOOM = 16;
@@ -89,7 +92,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private int spinnerCheck = 0;
     private TextView currentPoint;
     private ImageView streetView;
-
+    private Button navButton;
+    private LatLng dest;
+    private LatLng origin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +107,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         uploadBtn = (ImageButton)findViewById(R.id.upload__btn_img);
+        navButton = (Button) findViewById(R.id.navigationButton);
         spinner = (Spinner) findViewById(R.id.listOfShelters);
         currentPoint = (TextView) findViewById(R.id.currentPointText);
         streetView = (ImageView) findViewById(R.id.streetView);
@@ -117,6 +123,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         });
 
+        navButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(dest != null){
+                    String format = "geo:0,0?q=" + dest.latitude + "," + dest.longitude +"mode=walking,"+ "("+destMarker.getTitle()+")";
+                    Uri uri = Uri.parse(format);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }else{
+                    Toast.makeText(getApplicationContext(), "אנא בחר נקודה לניווט", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
     }
 
@@ -134,9 +154,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 if(++spinnerCheck > 1) {
                     try {
-                        Marker mark = (Marker) spinner.getSelectedItem();
-                        LatLng origin = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
-                        LatLng dest = new LatLng(mark.getPosition().latitude, mark.getPosition().longitude);
+                        destMarker = (Marker) spinner.getSelectedItem();
+                        origin = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+                        dest = new LatLng(destMarker.getPosition().latitude, destMarker.getPosition().longitude);
                         //getting URL to the Google direction API
                         String url = getDirectionsUrl(origin, dest);
                         DownloadTask downloadTask = new DownloadTask();
