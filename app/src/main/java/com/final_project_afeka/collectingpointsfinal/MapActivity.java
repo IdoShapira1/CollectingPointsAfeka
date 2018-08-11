@@ -137,9 +137,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 }
             }
         });
-
     }
-
 
     private void addSheltersNavigation(){
         List<Marker> allLists = new ArrayList(pendingMarkersList);
@@ -172,7 +170,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onNothingSelected(AdapterView<?> adapter) {  }
         });
 
-
     }
     private void addFilters(){
         pendingCheckBox = (CheckBox) findViewById(R.id.pendingPointsCheck);
@@ -201,7 +198,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 }
             }
         });
-
 
     }
     @Override
@@ -248,7 +244,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
             @Override
             public void onMarkerDrag(Marker arg0) {
-                 //TODO Auto-generated method stub
+                //TODO Auto-generated method stub
             }
         });
 
@@ -291,8 +287,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
 
     }
-
-
 
     private void updateLocationUI() {
         if (mMap == null) {
@@ -430,9 +424,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
 
-
-
-
     private class DownloadTask extends AsyncTask<String, Void, String> {
 
         @Override
@@ -459,12 +450,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         }
     }
-
-
-    /**
-     * A class to parse the Google Places in JSON format
-     */
-
 
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
 
@@ -518,7 +503,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 // Drawing polyline in the Google Map for the i-th route
             try{
                 if (polyline != null)
-                        polyline.remove();
+                    polyline.remove();
                 polyline = mMap.addPolyline(lineOptions);
             } catch(Exception e){
                 Toast.makeText(getApplicationContext(), "לא ניתן לייצר מסלול לנקודה זו", Toast.LENGTH_LONG).show();

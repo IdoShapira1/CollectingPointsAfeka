@@ -1,7 +1,5 @@
 package com.final_project_afeka.collectingpointsfinal;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Handler;
@@ -35,14 +33,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class AdminActions extends AppCompatActivity implements OnMapReadyCallback,AdapterView.OnItemClickListener {
-    private static final String TAG = AdminActions.class.getSimpleName();
     GoogleMap mMap;
     private Location mLastKnownLocation;
-    private final Handler handler = new Handler();
     private boolean mLocationPermissionGranted;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int DEFAULT_ZOOM = 16;
@@ -52,7 +47,7 @@ public class AdminActions extends AppCompatActivity implements OnMapReadyCallbac
     private ArrayList<Shelter> pendingShelterList = new ArrayList<>();
     private ArrayList<String> shelterIdPending = new ArrayList<>();
     final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-    AdminShelterAdpter adapter;
+    AdminShelterAdapter adapter;
     ListView listView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +59,7 @@ public class AdminActions extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.mapFragmentAdmin);
         mapFragment.getMapAsync(this);
         addSheltersMarkers();
-        adapter = new AdminShelterAdpter(this,R.layout.adpter_view_layout, pendingShelterList, pendingMarkersList, shelterIdPending, mMap);
+        adapter = new AdminShelterAdapter(this,R.layout.adpter_view_layout, pendingShelterList, pendingMarkersList, shelterIdPending, mMap);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
     }
@@ -77,7 +72,6 @@ public class AdminActions extends AppCompatActivity implements OnMapReadyCallbac
         getLocationPermission();
         // Turn on the My Location layer and the related control on the map.
         updateLocationUI();
-
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
     }

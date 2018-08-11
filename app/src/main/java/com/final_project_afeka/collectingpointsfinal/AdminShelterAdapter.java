@@ -25,8 +25,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class AdminShelterAdpter extends ArrayAdapter<Shelter> {
-    private static final String TAG = AdminShelterAdpter.class.getSimpleName();
+public class AdminShelterAdapter extends ArrayAdapter<Shelter> {
+    private static final String TAG = AdminShelterAdapter.class.getSimpleName();
     private Context mContext;
     private int mResource;
     private ArrayList<Shelter> pendingSheltersList;
@@ -41,7 +41,7 @@ public class AdminShelterAdpter extends ArrayAdapter<Shelter> {
      * @param resource
      * @param pendingSheltersList
      */
-    public AdminShelterAdpter(Context context, int resource , ArrayList<Shelter> pendingSheltersList, ArrayList<Marker> pendingMarkersList, ArrayList<String> shelterIdPending ,GoogleMap mMap)
+    public AdminShelterAdapter(Context context, int resource , ArrayList<Shelter> pendingSheltersList, ArrayList<Marker> pendingMarkersList, ArrayList<String> shelterIdPending , GoogleMap mMap)
     {
         super(context, resource, pendingSheltersList);
         mContext = context;

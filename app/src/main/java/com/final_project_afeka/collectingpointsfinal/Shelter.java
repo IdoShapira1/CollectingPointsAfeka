@@ -9,7 +9,6 @@ public class Shelter {
     private String address;
     private int isApproved;
     private String email;
-
     /**
      *  isApproved logic:
      *  1 = approved

@@ -4,7 +4,6 @@ package com.final_project_afeka.collectingpointsfinal;
  * Created by idoshapira-mbp on 29/07/2018.
  */
 
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 

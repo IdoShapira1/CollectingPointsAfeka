@@ -13,7 +13,6 @@ public class User {
 
     public User(){
     }
-
     public User(int isAdmin,int pointsCollected,String email,int pointsApproved,int pointsDeclined){
         this.isAdmin = isAdmin;
         this.pointsCollected = pointsCollected;

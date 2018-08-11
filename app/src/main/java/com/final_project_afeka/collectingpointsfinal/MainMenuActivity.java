@@ -1,7 +1,6 @@
 package com.final_project_afeka.collectingpointsfinal;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
