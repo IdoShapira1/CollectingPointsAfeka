@@ -34,16 +34,15 @@ public class ConnectionServer {
     }
 
     public ArrayList<SafePoint> getAllShelters(){
-        String url = "https://api.myjson.com/bins/zm5ws"; // get shelters URL
+        String url = "http://3.121.116.91:3000/shelters"; // get shelters URL
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    JSONArray jsonArray = response.getJSONArray("locations");
+                    JSONArray jsonArray = response.getJSONArray("result");
                     for (int i=0; i< jsonArray.length(); i++) {
                         JSONObject she = jsonArray.getJSONObject(i);
                         SafePoint point = new SafePoint(she.getString("user_email"), she.getDouble("latitude") , she.getDouble("longitude"), she.getInt("approved"), she.getString("address"));
-                        Log.e(TAG, "shelter long:" +point.getLongitude()+" lati: "+point.getLatitude());
                         shelters.add(point);
                     }
                     mapActivity.addSheltersMarkers(shelters);
@@ -63,15 +62,16 @@ public class ConnectionServer {
     }
 
     public void uploadSafePoint(SafePoint point){
-        String url = "https://webhook.site/b358b9ce-9950-4409-93ed-74e6618637ac"; // post new shelter
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("email",point.getEmail());
-        params.put("latitude",point.getLatitude());
-        params.put("longitude",point.getLongitude());
+        String url = "http://3.121.116.91:3000/shelters"; // post new shelter
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("user_email",point.getEmail());
+        params.put("latitude",point.getLatitude()+"");
+        params.put("longitude",point.getLongitude()+"");
         params.put("address",point.getAddress());
-        params.put("city",point.getAddress().split(",")[1]);
+        params.put("city",point.getAddress().split(",")[1].replaceAll("\\s+","")); // remove spaces
 
         JSONObject jsonObj = new JSONObject(params);
+
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, jsonObj, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -87,8 +87,7 @@ public class ConnectionServer {
     }
 
     public void updatePointsCollected(String email){
-        String url = "https://webhook.site/b358b9ce-9950-4409-93ed-74e6618637ac/?email="+email; // post new shelter
-       // String uri = String.format(url, email);
+        String url = "http://3.121.116.91:3000/users/points_collected?email="+email; // post new shelter
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url,null, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
