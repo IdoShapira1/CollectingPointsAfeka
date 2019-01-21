@@ -15,36 +15,37 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ConnectionServer {
 
     private static final String TAG = "Connection Server";
     private static RequestQueue mQueue;
     private MapActivity mapActivity;
+    private ArrayList<SafePoint> shelters = new ArrayList<SafePoint>();
 
 
     public ConnectionServer(Context context){
         mQueue = Volley.newRequestQueue(context);
-     //   this.mapActivity = (MapActivity) context;
+        this.mapActivity = (MapActivity) context;
     }
 
-    public void getAllShelters(){
-        String url = "https://api.myjson.com/bins/aylr0"; // get shelters URL
+    public ArrayList<SafePoint> getAllShelters(){
+        String url = "https://api.myjson.com/bins/zm5ws"; // get shelters URL
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     JSONArray jsonArray = response.getJSONArray("locations");
-                   // ArrayList<LatLng> rv;
                     for (int i=0; i< jsonArray.length(); i++) {
-                        JSONObject shelter = jsonArray.getJSONObject(i);
-                        Log.e(TAG, "shelter area_code:" +shelter.getInt("area_code")+" address: "+shelter.getString("address")+" approved:" +shelter.getInt("approved"));
-                        Log.e(TAG, "lat is: "+shelter.getDouble("latitude") + " lan is: "+shelter.getDouble("longitude"));
-
-                        //    mDatabaseHelper.addData(latlan.getDouble("lat"),latlan.getDouble("lan")); // adding points to local db
+                        JSONObject she = jsonArray.getJSONObject(i);
+                        SafePoint point = new SafePoint(she.getString("user_email"), she.getDouble("latitude") , she.getDouble("longitude"), she.getInt("approved"), she.getString("address"));
+                        Log.e(TAG, "shelter long:" +point.getLongitude()+" lati: "+point.getLatitude());
+                        shelters.add(point);
                     }
-                 //   rv = mDatabaseHelper.getPointsNear(originPosition); // get points from db
-                 //   mainActivity.addSafeMarkerOnMap(rv);
+                    mapActivity.addSheltersMarkers(shelters);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -55,6 +56,39 @@ public class ConnectionServer {
                 error.printStackTrace();
             }
         });
-        mQueue.add(request);    }
+        mQueue.add(request);
+        return  shelters;
+    }
+
+    public void uploadSafePoint(SafePoint point){
+        String url = "https://webhook.site/b358b9ce-9950-4409-93ed-74e6618637ac"; // post new shelter
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("email",point.getEmail());
+        params.put("latitude",point.getLatitude());
+        params.put("longitude",point.getLongitude());
+        params.put("address",point.getAddress());
+        params.put("city",point.getAddress().split(",")[1]);
+
+        JSONObject jsonObj = new JSONObject(params);
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, jsonObj, new com.android.volley.Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.e(TAG, "onResponse: respone"+ response );
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        mQueue.add(request);
+    }
+
+
+
+
+    public void updateUserData(String uId){
+
+    }
 
 }

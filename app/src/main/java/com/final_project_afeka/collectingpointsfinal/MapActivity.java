@@ -90,6 +90,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private LatLng origin;
     private static final String TAG = "Activity";
     private ConnectionServer connectionServer;
+    private ArrayList<SafePoint> shelters;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,9 +110,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mapFragment);
         this.connectionServer = new ConnectionServer(this);
+        connectionServer.getAllShelters();
 
         mapFragment.getMapAsync(this);
-        addSheltersMarkers();
+      //  addSheltersMarkers();
         addFilters();
         uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -224,6 +226,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
                 }
                 //setStreetViewImage();
+                currentPoint.setText(getCompleteAddressString(myMarker.getPosition().latitude,myMarker.getPosition().longitude));
             }
         });
 
@@ -236,6 +239,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onMarkerDragEnd(Marker arg0) {
                 //setStreetViewImage();
+                currentPoint.setText(getCompleteAddressString(myMarker.getPosition().latitude,myMarker.getPosition().longitude));
             }
             @Override
             public void onMarkerDrag(Marker arg0) {
@@ -253,9 +257,42 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         currentPoint.setText(getCompleteAddressString(myMarker.getPosition().latitude,myMarker.getPosition().longitude));
     }
 
+    public void addSheltersMarkers(ArrayList<SafePoint> shelters){
+        for(int i = 0 ; i < shelters.size() ; i++){
+            MarkerOptions marker = new MarkerOptions()
+                    .position(new LatLng(shelters.get(i).getLatitude(), shelters.get(i).getLongitude()))
+                    .title(shelters.get(i).getAddress());
+
+            if (shelters.get(i).getApproved() == 1){
+                marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter2));
+                approvedMarkersList.add(mMap.addMarker(marker));
+            }else{
+                marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_shelter2));
+                pendingMarkersList.add(mMap.addMarker(marker));
+            }
+        }
+        addSheltersNavigation();
+    }
+
     private void addSheltersMarkers(){
         // type = 0 pending shelter , type = 1 approved point
-        connectionServer.getAllShelters();
+        Log.e(TAG, "im not happy");
+        for(int i = 0 ; i < shelters.size() ; i++){
+            Log.e(TAG, "i am long:" +shelters.get(i).getLongitude()+" lati: "+shelters.get(i).getLatitude()+" approve is:"+shelters.get(i).getApproved());
+            MarkerOptions marker = new MarkerOptions()
+                    .position(new LatLng(shelters.get(i).getLatitude(), shelters.get(i).getLongitude()))
+                    .title(shelters.get(i).getAddress());
+
+            if (shelters.get(i).getApproved() == 1){
+                marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter2));
+                approvedMarkersList.add(mMap.addMarker(marker));
+            }else{
+                marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_shelter2));
+                pendingMarkersList.add(mMap.addMarker(marker));
+            }
+        }
+        Log.e(TAG, "im not happy at all");
+        addSheltersNavigation();
 /*        database.child("shelters").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -363,7 +400,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
     private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
         String strAdd = "";
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        Geocoder geocoder = new Geocoder(this, Locale.ENGLISH);
         try {
             List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
             if (addresses != null) {
@@ -381,33 +418,21 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return strAdd;
     }
 
-    public void UploadPoint()
-    {
-        if (myMarker != null)
-        {
+    public void UploadPoint() {
+        if (myMarker != null) {
             double lng = myMarker.getPosition().longitude;
             double lat = myMarker.getPosition().latitude;
-            final String uID = mAuth.getCurrentUser().getUid();
-            Shelter shelter = new Shelter(uID,lng,lat,getCompleteAddressString(lat,lng),0,mAuth.getCurrentUser().getEmail());
-
-            database.child("shelters").push().setValue(shelter);
-            database.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    updateUserInformation(dataSnapshot,uID);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
+            final String email = mAuth.getCurrentUser().getEmail();
+            SafePoint point = new SafePoint(email,lat,lng,0,getCompleteAddressString(lat,lng));
+            connectionServer.uploadSafePoint(point);
             Toast.makeText(getApplicationContext(), "מחסה הועלה למאגר הנתונים", Toast.LENGTH_LONG).show();
         }
         else{
             Toast.makeText(getApplicationContext(), "אנא בחר נקודה!", Toast.LENGTH_LONG).show();
         }
     }
+
+
 
     private void updateUserInformation(DataSnapshot dataSnapshot,String uID) {
         int pointsCollected = dataSnapshot.child("users/"+uID).getValue(User.class).getPointsCollected();
