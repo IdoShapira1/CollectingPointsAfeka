@@ -1,8 +1,10 @@
 package com.final_project_afeka.collectingpointsfinal;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -84,11 +86,24 @@ public class ConnectionServer {
         mQueue.add(request);
     }
 
+    public void updatePointsCollected(String email){
+        String url = "https://webhook.site/b358b9ce-9950-4409-93ed-74e6618637ac/?email="+email; // post new shelter
+       // String uri = String.format(url, email);
 
-
-
-    public void updateUserData(String uId){
-
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url,null, new com.android.volley.Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.e(TAG, "onResponse: respone"+ response );
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        mQueue.add(request);
     }
+
+
 
 }

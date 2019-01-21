@@ -274,50 +274,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         addSheltersNavigation();
     }
 
-    private void addSheltersMarkers(){
-        // type = 0 pending shelter , type = 1 approved point
-        Log.e(TAG, "im not happy");
-        for(int i = 0 ; i < shelters.size() ; i++){
-            Log.e(TAG, "i am long:" +shelters.get(i).getLongitude()+" lati: "+shelters.get(i).getLatitude()+" approve is:"+shelters.get(i).getApproved());
-            MarkerOptions marker = new MarkerOptions()
-                    .position(new LatLng(shelters.get(i).getLatitude(), shelters.get(i).getLongitude()))
-                    .title(shelters.get(i).getAddress());
-
-            if (shelters.get(i).getApproved() == 1){
-                marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter2));
-                approvedMarkersList.add(mMap.addMarker(marker));
-            }else{
-                marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_shelter2));
-                pendingMarkersList.add(mMap.addMarker(marker));
-            }
-        }
-        Log.e(TAG, "im not happy at all");
-        addSheltersNavigation();
-/*        database.child("shelters").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Shelter shelter = snapshot.getValue(Shelter.class);
-                    MarkerOptions marker = new MarkerOptions()
-                            .position(new LatLng(shelter.getLalatitudet(), shelter.getLongitude()))
-                            .title(shelter.getAddress());
-                    if(shelter.isApproved() == 1)
-                    {
-                        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter2));
-                        approvedMarkersList.add(mMap.addMarker(marker));
-                    }else{
-                        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_shelter2));
-                        pendingMarkersList.add(mMap.addMarker(marker));
-                    }
-                }
-                addSheltersNavigation();
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });*/
-
-    }
 
     private void updateLocationUI() {
         if (mMap == null) {
@@ -425,6 +381,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             final String email = mAuth.getCurrentUser().getEmail();
             SafePoint point = new SafePoint(email,lat,lng,0,getCompleteAddressString(lat,lng));
             connectionServer.uploadSafePoint(point);
+            connectionServer.updatePointsCollected(email);
             Toast.makeText(getApplicationContext(), "מחסה הועלה למאגר הנתונים", Toast.LENGTH_LONG).show();
         }
         else{
@@ -432,14 +389,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-
-
-    private void updateUserInformation(DataSnapshot dataSnapshot,String uID) {
-        int pointsCollected = dataSnapshot.child("users/"+uID).getValue(User.class).getPointsCollected();
-        //   int pointsDeclined = dataSnapshot.child("users/"+uID).getValue(User.class).getPointsDeclined();
-        database.child("users/"+uID).child("pointsCollected").setValue(pointsCollected+1);
-        // database.child("users/"+uID).child("pointsDeclined").setValue(pointsDeclined+1);
-    }
 
 
     private class DownloadTask extends AsyncTask<String, Void, String> {
