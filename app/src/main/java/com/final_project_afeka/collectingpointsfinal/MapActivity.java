@@ -88,6 +88,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private Button navButton;
     private LatLng dest;
     private LatLng origin;
+    private static final String TAG = "Activity";
+    private ConnectionServer connectionServer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +108,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         streetView = (ImageView) findViewById(R.id.streetView);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mapFragment);
+        this.connectionServer = new ConnectionServer(this);
+
         mapFragment.getMapAsync(this);
         addSheltersMarkers();
         addFilters();
@@ -142,7 +146,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onItemSelected(AdapterView<?> adapterView, View view,
                                        int position, long id) {
                 // Here you get the current item (a User object) that is selected by its position
-
                 if(++spinnerCheck > 1) {
                     try {
                         destMarker = (Marker) spinner.getSelectedItem();
@@ -220,7 +223,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     myMarker.setPosition(latLng);
 
                 }
-                setStreetViewImage();
+                //setStreetViewImage();
             }
         });
 
@@ -232,7 +235,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @SuppressWarnings("unchecked")
             @Override
             public void onMarkerDragEnd(Marker arg0) {
-                setStreetViewImage();
+                //setStreetViewImage();
             }
             @Override
             public void onMarkerDrag(Marker arg0) {
@@ -241,16 +244,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
     }
 
+
     private void setStreetViewImage(){
+        // Disabled due to Google API new policies
         String imageURL;
-        imageURL = "https://maps.googleapis.com/maps/api/streetview?size=400x400&location="+myMarker.getPosition().latitude+","+myMarker.getPosition().longitude+"&fov=90&heading=235&pitch=10";
+        imageURL = "https://maps.googleapis.com/maps/api/streetview?size=400x400&location="+myMarker.getPosition().latitude+","+myMarker.getPosition().longitude+"&fov=90&heading=235&pitch=10&key=AIzaSyBmGS_edoEQbVLLUm8sswajunOiwaotnok";
         Picasso.get().load(imageURL).into(streetView);
         currentPoint.setText(getCompleteAddressString(myMarker.getPosition().latitude,myMarker.getPosition().longitude));
     }
 
     private void addSheltersMarkers(){
         // type = 0 pending shelter , type = 1 approved point
-        database.child("shelters").addListenerForSingleValueEvent(new ValueEventListener() {
+        connectionServer.getAllShelters();
+/*        database.child("shelters").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -272,7 +278,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
-        });
+        });*/
 
     }
 
