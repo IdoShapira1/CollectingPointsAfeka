@@ -81,7 +81,7 @@ public class MainMenuActivity extends AppCompatActivity {
         });
     }
 
-    void pullUserData(String email) {
+    private void pullUserData(String email) {
         String url = "http://3.121.116.91:3000/users/?email="+email; // GET users
 
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new com.android.volley.Response.Listener<JSONObject>() {
@@ -119,5 +119,6 @@ public class MainMenuActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        pullUserData(mAuth.getCurrentUser().getEmail());
     }
 }
