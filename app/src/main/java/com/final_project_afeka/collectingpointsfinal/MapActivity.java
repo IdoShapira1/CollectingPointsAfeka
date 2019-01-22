@@ -155,6 +155,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                         dest = new LatLng(destMarker.getPosition().latitude, destMarker.getPosition().longitude);
                         //getting URL to the Google direction API
                         String url = getDirectionsUrl(origin, dest);
+                        Log.e(TAG, "onResponse: respone" + url);
                         DownloadTask downloadTask = new DownloadTask();
                         // Start downloading json data from Google Directions API
                         downloadTask.execute(url);
@@ -443,7 +444,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             ArrayList points = null;
             PolylineOptions lineOptions = null;
             MarkerOptions markerOptions = new MarkerOptions();
-
             for (int i = 0; i < result.size(); i++) {
                 points = new ArrayList();
                 lineOptions = new PolylineOptions();
@@ -473,7 +473,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     polyline.remove();
                 polyline = mMap.addPolyline(lineOptions);
             } catch(Exception e){
-                Toast.makeText(getApplicationContext(), "לא ניתן לייצר מסלול לנקודה זו", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "לא ניתן לייצר מסלול לנקודה זו"+e, Toast.LENGTH_LONG).show();
             }
 
         }
@@ -492,7 +492,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         // Output format
         String output = "json";
         // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters+"&key=AIzaSyBmGS_edoEQbVLLUm8sswajunOiwaotnok";
         return url;
     }
 
