@@ -14,6 +14,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -32,6 +37,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 
@@ -44,22 +53,26 @@ public class AdminActions extends AppCompatActivity implements OnMapReadyCallbac
     private LatLng mDefaultLocation = new LatLng(32.113819, 34.817794);
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private ArrayList<Marker> pendingMarkersList = new ArrayList<>();
-    private ArrayList<Shelter> pendingShelterList = new ArrayList<>();
-    private ArrayList<String> shelterIdPending = new ArrayList<>();
+    private ArrayList<SafePoint> pendingShelterList = new ArrayList<>();
+    private ArrayList<Integer> shelterIdPending = new ArrayList<>();
     final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
     AdminShelterAdapter adapter;
     ListView listView;
+    private RequestQueue mQueue;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_actions);
+        mQueue = Volley.newRequestQueue(this);
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         listView = (ListView)findViewById(R.id.listView_admin);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mapFragmentAdmin);
         mapFragment.getMapAsync(this);
-        addSheltersMarkers();
-        adapter = new AdminShelterAdapter(this,R.layout.adpter_view_layout, pendingShelterList, pendingMarkersList, shelterIdPending, mMap);
+        getAllShelters();
+        adapter = new AdminShelterAdapter(this,R.layout.adpter_view_layout,pendingShelterList,pendingMarkersList,shelterIdPending,mMap);
+      //  adapter = new AdminShelterAdapter(this,R.layout.adpter_view_layout, pendingShelterList, pendingMarkersList, shelterIdPending, mMap);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
     }
@@ -139,35 +152,47 @@ public class AdminActions extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void addSheltersMarkers(){
-        // type = 0 pending shelter , type = 1 approved point
-        database.child("shelters").addListenerForSingleValueEvent(new ValueEventListener() {
+
+
+    private void getAllShelters(){
+        String url = "http://3.121.116.91:3000/shelters"; // get shelters URL
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Shelter shelter = snapshot.getValue(Shelter.class);
-                    MarkerOptions marker = new MarkerOptions()
-                            .position(new LatLng(shelter.getLalatitudet(), shelter.getLongitude()))
-                            .title(shelter.getAddress());
-                    if(shelter.isApproved() == 1)
-                    {
-                        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter2));
-                        mMap.addMarker(marker);
-                    }else{
-                        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_shelter2));
-                        pendingMarkersList.add(mMap.addMarker(marker));
-                        pendingShelterList.add(shelter);
-                        shelterIdPending.add(snapshot.getKey());
-                        moveCamera(shelter.getLalatitudet(),shelter.getLongitude());
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray jsonArray = response.getJSONArray("result");
+                    for (int i=0; i< jsonArray.length(); i++) {
+                        JSONObject she = jsonArray.getJSONObject(i);
+                        SafePoint shelter = new SafePoint(she.getInt("id"),she.getString("user_email"), she.getDouble("latitude") , she.getDouble("longitude"), she.getInt("approved"), she.getString("address"));
+                        MarkerOptions marker = new MarkerOptions()
+                                .position(new LatLng(shelter.getLatitude(), shelter.getLongitude()))
+                                .title(shelter.getAddress());
+                        if(shelter.getApproved() == 1)
+                        {
+                            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter2));
+                            mMap.addMarker(marker);
+                        }else{
+                            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_shelter2));
+                            pendingMarkersList.add(mMap.addMarker(marker));
+                            pendingShelterList.add(shelter);
+                            shelterIdPending.add(shelter.getId());
+                            moveCamera(shelter.getLatitude(),shelter.getLongitude());
+                        }
+                        adapter.notifyDataSetChanged();
+
                     }
-                    adapter.notifyDataSetChanged();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
+        }, new com.android.volley.Response.ErrorListener() {
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
             }
         });
-
+        mQueue.add(request);
     }
 
     public void moveCamera(double latitude, double longitude)

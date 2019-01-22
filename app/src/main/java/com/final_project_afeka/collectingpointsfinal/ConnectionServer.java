@@ -42,7 +42,7 @@ public class ConnectionServer {
                     JSONArray jsonArray = response.getJSONArray("result");
                     for (int i=0; i< jsonArray.length(); i++) {
                         JSONObject she = jsonArray.getJSONObject(i);
-                        SafePoint point = new SafePoint(she.getString("user_email"), she.getDouble("latitude") , she.getDouble("longitude"), she.getInt("approved"), she.getString("address"));
+                        SafePoint point = new SafePoint(she.getInt("id"),she.getString("user_email"), she.getDouble("latitude") , she.getDouble("longitude"), she.getInt("approved"), she.getString("address"));
                         shelters.add(point);
                     }
                     mapActivity.addSheltersMarkers(shelters);

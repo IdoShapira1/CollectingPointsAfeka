@@ -11,6 +11,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,28 +28,27 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
-public class AdminShelterAdapter extends ArrayAdapter<Shelter> {
+public class AdminShelterAdapter extends ArrayAdapter<SafePoint> {
     private static final String TAG = AdminShelterAdapter.class.getSimpleName();
     private Context mContext;
     private int mResource;
-    private ArrayList<Shelter> pendingSheltersList;
+    private ArrayList<SafePoint> pendingSheltersList;
     private ArrayList<Marker> pendingMarkersList;
-    private ArrayList<String> shelterIdPending;
+    private ArrayList<Integer> shelterIdPending;
     private GoogleMap mMap;
     final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+    private RequestQueue mQueue;
 
-    /**
-     * Default constructor for the PersonListAdapter
-     * @param context
-     * @param resource
-     * @param pendingSheltersList
-     */
-    public AdminShelterAdapter(Context context, int resource , ArrayList<Shelter> pendingSheltersList, ArrayList<Marker> pendingMarkersList, ArrayList<String> shelterIdPending , GoogleMap mMap)
-    {
+
+
+    public AdminShelterAdapter(Context context, int resource , ArrayList<SafePoint> pendingSheltersList, ArrayList<Marker> pendingMarkersList, ArrayList<Integer> shelterIdPending , GoogleMap mMap){
         super(context, resource, pendingSheltersList);
         mContext = context;
+        mQueue = Volley.newRequestQueue(context);
         mResource = resource;
         this.pendingSheltersList=pendingSheltersList;
         this.pendingMarkersList=pendingMarkersList;
@@ -57,34 +61,30 @@ public class AdminShelterAdapter extends ArrayAdapter<Shelter> {
     public View getView(final int position, View convertView, ViewGroup parent) {
         String address = getItem(position).getAddress();
         String email = getItem(position).getEmail();
-
+        final int shelterId = getItem(position).getId();
         LayoutInflater inflater = LayoutInflater.from(mContext);
         convertView = inflater.inflate(mResource,parent,false);
-
-
         TextView tx_address = (TextView) convertView.findViewById(R.id.listAddress);
         TextView tx_email = (TextView) convertView.findViewById(R.id.listEmail);
         ImageButton bt_confirm = (ImageButton) convertView.findViewById(R.id.confirm_button);
         ImageButton bt_delete = (ImageButton) convertView.findViewById(R.id.delete_button);
-
         bt_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String shelterId = shelterIdPending.get(position);
                 pendingMarkersList.get(position).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter2));
                 Log.d(TAG, "onClick: shelter id: "+shelterId);
-                approvePoint(shelterId ,pendingMarkersList.get(position), getItem(position).getuId());
+                approvePoint(shelterId ,pendingMarkersList.get(position), getItem(position).getEmail());
                 Toast.makeText(mContext,"מחסה אושר",Toast.LENGTH_LONG).show();
                 pendingSheltersList.remove(position);
                 notifyDataSetChanged();
+
             }
         });
         bt_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String shelterId = shelterIdPending.get(position);
                 Log.d(TAG, "onClick: shelter Id "+shelterId);
-                DeclinePoint(shelterId ,pendingMarkersList.get(position), getItem(position).getuId());
+                DeclinePoint(shelterId ,pendingMarkersList.get(position), getItem(position).getEmail());
                 Toast.makeText(mContext,"מחסה לא אושר",Toast.LENGTH_LONG).show();
                 pendingSheltersList.remove(position);
                 notifyDataSetChanged();
@@ -93,7 +93,7 @@ public class AdminShelterAdapter extends ArrayAdapter<Shelter> {
         tx_address.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                double lat = pendingSheltersList.get(position).getLalatitudet();
+                double lat = pendingSheltersList.get(position).getLatitude();
                 double lang = pendingSheltersList.get(position).getLongitude();
                 CameraUpdate location =CameraUpdateFactory.newLatLng(new LatLng(lat,lang));
                 mMap.animateCamera(location);
@@ -107,27 +107,67 @@ public class AdminShelterAdapter extends ArrayAdapter<Shelter> {
 
     }
 
-    private void approvePoint(final String shelterId, Marker marker, final String uID) {
+    private void approvePoint(int shelterId, Marker marker, final String email) {
         marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter2));
-        database.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        // Approve point
+        String url = "http://3.121.116.91:3000/shelters?id="+shelterId; // update shelter
+        JsonObjectRequest requestUpdateSafePoint = new JsonObjectRequest(Request.Method.PUT, url,null, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                int pointsApproved = dataSnapshot.child("users/"+uID).getValue(User.class).getPointsApproved();
-                database.child("users/"+uID).child("pointsApproved").setValue(pointsApproved+1);
-                database.child("shelters/"+shelterId).child("approved").setValue(1);
+            public void onResponse(JSONObject response) {
+                Log.e(TAG, "onResponse: respone"+ response );
             }
-
+        }, new com.android.volley.Response.ErrorListener() {
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
             }
         });
-
+        String userUrl = "http://3.121.116.91:3000/users/points_approved?email="+email; // add point to user
+        JsonObjectRequest requestAddPointUser = new JsonObjectRequest(Request.Method.PUT, userUrl,null, new com.android.volley.Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.e(TAG, "onResponse: respone"+ response );
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        mQueue.add(requestUpdateSafePoint);
+        mQueue.add(requestAddPointUser);
     }
 
-    private void DeclinePoint(final String shelterId, Marker marker, final String uID) {
+    private void DeclinePoint(int shelterId, Marker marker, final String email) {
         marker.remove();
-        database.addListenerForSingleValueEvent(new ValueEventListener() {
+        String url = "http://3.121.116.91:3000/shelters?id="+shelterId;
+        JsonObjectRequest requestUpdateSafePoint = new JsonObjectRequest(Request.Method.DELETE, url,null, new com.android.volley.Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.e(TAG, "onResponse: respone"+ response );
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        String userUrl = "http://3.121.116.91:3000/users/points_declined?email="+email;
+        JsonObjectRequest requestDecreasePointUser = new JsonObjectRequest(Request.Method.PUT, userUrl,null, new com.android.volley.Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.e(TAG, "onResponse: respone"+ response );
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        mQueue.add(requestUpdateSafePoint);
+        mQueue.add(requestDecreasePointUser);
+/*        database.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 int pointsDeclined = dataSnapshot.child("users/"+uID).getValue(User.class).getPointsDeclined();
@@ -139,9 +179,7 @@ public class AdminShelterAdapter extends ArrayAdapter<Shelter> {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
-
-
+        });*/
     }
 
 

@@ -65,11 +65,10 @@ public class MainMenuActivity extends AppCompatActivity {
                                 startActivity(new Intent(MainMenuActivity.this,MapActivity.class));
                                 break;
                             case 1:
-                                if (finishReadFromDB)
-                                    if (user.getIsAdmin() == 0 )
-                                        Toast.makeText(getApplicationContext(),R.string.admin_failed,Toast.LENGTH_LONG).show();
-                                    else
-                                        startActivity(new Intent(MainMenuActivity.this,AdminActions.class));
+                                if (user.getIsAdmin() == 0 )
+                                    Toast.makeText(getApplicationContext(),R.string.admin_failed,Toast.LENGTH_LONG).show();
+                                else
+                                    startActivity(new Intent(MainMenuActivity.this,AdminActions.class));
                                 break;
                         }
                         return true;

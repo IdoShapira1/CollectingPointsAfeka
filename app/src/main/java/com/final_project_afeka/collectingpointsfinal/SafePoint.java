@@ -3,13 +3,18 @@ package com.final_project_afeka.collectingpointsfinal;
 public class SafePoint {
 
     private String email;
-
+    private int id;
     private double latitude;
     private double longitude;
     private int approved;
     private String address;
 
-    public SafePoint(String email, double latitude, double longitude, int approved, String address) {
+    public SafePoint(){
+
+    }
+
+    public SafePoint(int id, String email, double latitude, double longitude, int approved, String address) {
+        this.id = id;
         this.email = email;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -17,13 +22,24 @@ public class SafePoint {
         this.address = address;
     }
 
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getEmail() {
         return email;
     }
 
-    public void setId(String email) {
+    public void setEmail(String email) {
         this.email = email;
     }
+
+
 
 
     public double getLatitude() {

@@ -379,7 +379,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             double lng = myMarker.getPosition().longitude;
             double lat = myMarker.getPosition().latitude;
             final String email = mAuth.getCurrentUser().getEmail();
-            SafePoint point = new SafePoint(email,lat,lng,0,getCompleteAddressString(lat,lng));
+            SafePoint point = new SafePoint(0,email,lat,lng,0,getCompleteAddressString(lat,lng));
             connectionServer.uploadSafePoint(point);
             connectionServer.updatePointsCollected(email);
             Toast.makeText(getApplicationContext(), "מחסה הועלה למאגר הנתונים", Toast.LENGTH_LONG).show();
