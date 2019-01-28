@@ -155,7 +155,7 @@ public class AdminActions extends AppCompatActivity implements OnMapReadyCallbac
 
 
     private void getAllShelters(){
-        String url = "http://3.121.116.91:3000/shelters"; // get shelters URL
+        String url = "http://18.130.17.203:3000/shelters"; // get shelters URL
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {

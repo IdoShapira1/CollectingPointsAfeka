@@ -34,7 +34,7 @@ public class ConnectionServer {
     }
 
     public ArrayList<SafePoint> getAllShelters(){
-        String url = "http://3.121.116.91:3000/shelters"; // get shelters URL
+        String url = "http://18.130.17.203:3000/shelters"; // get shelters URL
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -62,7 +62,7 @@ public class ConnectionServer {
     }
 
     public void uploadSafePoint(SafePoint point){
-        String url = "http://3.121.116.91:3000/shelters"; // post new shelter
+        String url = "http://18.130.17.203:3000/shelters"; // post new shelter
         Map<String, String> params = new HashMap<String, String>();
         params.put("user_email",point.getEmail());
         params.put("latitude",point.getLatitude()+"");
@@ -87,7 +87,7 @@ public class ConnectionServer {
     }
 
     public void updatePointsCollected(String email){
-        String url = "http://3.121.116.91:3000/users/points_collected?email="+email; // post new shelter
+        String url = "http://18.130.17.203:3000/users/points_collected?email="+email; // post new shelter
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url,null, new com.android.volley.Response.Listener<JSONObject>() {
             @Override

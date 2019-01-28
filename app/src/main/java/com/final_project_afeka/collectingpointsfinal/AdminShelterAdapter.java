@@ -111,7 +111,7 @@ public class AdminShelterAdapter extends ArrayAdapter<SafePoint> {
         marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter2));
 
         // Approve point
-        String url = "http://3.121.116.91:3000/shelters?id="+shelterId; // update shelter
+        String url = "http://18.130.17.203:3000/shelters?id="+shelterId; // update shelter
         JsonObjectRequest requestUpdateSafePoint = new JsonObjectRequest(Request.Method.PUT, url,null, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -141,7 +141,7 @@ public class AdminShelterAdapter extends ArrayAdapter<SafePoint> {
 
     private void DeclinePoint(int shelterId, Marker marker, final String email) {
         marker.remove();
-        String url = "http://3.121.116.91:3000/shelters?id="+shelterId;
+        String url = "http://18.130.17.203:3000/shelters?id="+shelterId;
         JsonObjectRequest requestUpdateSafePoint = new JsonObjectRequest(Request.Method.DELETE, url,null, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
