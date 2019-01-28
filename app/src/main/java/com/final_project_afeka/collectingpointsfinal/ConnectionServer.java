@@ -25,16 +25,18 @@ public class ConnectionServer {
     private static final String TAG = "Connection Server";
     private static RequestQueue mQueue;
     private MapActivity mapActivity;
+    private Context mContext;
     private ArrayList<SafePoint> shelters = new ArrayList<SafePoint>();
 
 
     public ConnectionServer(Context context){
         mQueue = Volley.newRequestQueue(context);
+        mContext = context;
         this.mapActivity = (MapActivity) context;
     }
 
     public ArrayList<SafePoint> getAllShelters(){
-        String url = "http://18.130.17.203:3000/shelters"; // get shelters URL
+        String url = mContext.getString(R.string.server_ip)+"/shelters"; // get shelters URL
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -62,7 +64,7 @@ public class ConnectionServer {
     }
 
     public void uploadSafePoint(SafePoint point){
-        String url = "http://18.130.17.203:3000/shelters"; // post new shelter
+        String url = mContext.getString(R.string.server_ip)+"/shelters"; // post new shelter
         Map<String, String> params = new HashMap<String, String>();
         params.put("user_email",point.getEmail());
         params.put("latitude",point.getLatitude()+"");
@@ -87,7 +89,7 @@ public class ConnectionServer {
     }
 
     public void updatePointsCollected(String email){
-        String url = "http://18.130.17.203:3000/users/points_collected?email="+email; // post new shelter
+        String url = mContext.getString(R.string.server_ip)+"/users/points_collected?email="+email; // post new shelter
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT, url,null, new com.android.volley.Response.Listener<JSONObject>() {
             @Override

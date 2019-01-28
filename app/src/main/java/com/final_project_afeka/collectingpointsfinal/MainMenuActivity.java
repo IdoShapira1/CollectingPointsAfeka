@@ -82,8 +82,8 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     private void pullUserData(String email) {
-        String url = "http://18.130.17.203:3000/users/?email="+email; // GET users
 
+        String url = getString(R.string.server_ip)+"/users/?email="+email; // GET users
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -104,8 +104,8 @@ public class MainMenuActivity extends AppCompatActivity {
                     declineEt.setKeyListener(null);
                     collectEt.setKeyListener(null);
                 } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                    e.printStackTrace();
+                }
 
             }
         }, new com.android.volley.Response.ErrorListener() {
