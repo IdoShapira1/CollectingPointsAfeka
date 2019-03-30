@@ -11,7 +11,7 @@
         android:id="@+id/mapFragment"
         class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="372dp"
-        android:layout_height="372dp"
+        android:layout_height="444dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -64,53 +64,16 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/testPointsText"
-        android:layout_width="154dp"
-        android:layout_height="34dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/test_navigation"
-        android:textAppearance="@android:style/TextAppearance.Material"
-        app:layout_constraintBottom_toTopOf="@+id/listOfShelters"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.83"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/upload__btn_img"
-        app:layout_constraintTop_toBottomOf="@+id/currentPointText"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <TextView
         android:id="@+id/uploadShelterText"
         android:layout_width="94dp"
         android:layout_height="38dp"
-        android:layout_marginBottom="4dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginStart="8dp"
+        android:layout_marginBottom="4dp"
         android:text="@string/insert_new_point"
         android:textAppearance="@android:style/TextAppearance.Material"
         app:layout_constraintBottom_toTopOf="@+id/pendingPointsCheck"
-        app:layout_constraintEnd_toStartOf="@+id/testPointsText"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toEndOf="@+id/upload__btn_img" />
-
-    <Spinner
-        android:id="@+id/listOfShelters"
-        android:layout_width="161dp"
-        android:layout_height="42dp"
-        android:layout_marginBottom="68dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginStart="8dp"
-        android:background="@android:drawable/btn_dropdown"
-        android:spinnerMode="dropdown"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.75"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/pendingPointsCheck" />
 
     <TextView
         android:id="@+id/currentPointText"
@@ -128,39 +91,5 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mapFragment" />
-
-    <ImageView
-        android:id="@+id/streetView"
-        android:layout_width="158dp"
-        android:layout_height="130dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="212dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/mapFragment"
-        app:layout_constraintEnd_toEndOf="@+id/mapFragment"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/mapFragment"
-        app:layout_constraintTop_toTopOf="@+id/mapFragment"
-        app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@android:color/transparent" />
-
-    <Button
-        android:id="@+id/navigationButton"
-        android:layout_width="161dp"
-        android:layout_height="42dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/navigate"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.743"
-        app:layout_constraintStart_toEndOf="@+id/approvedPointsCheck"
-        app:layout_constraintTop_toBottomOf="@+id/listOfShelters"
-        app:layout_constraintVertical_bias="0.272" />
 
 </android.support.constraint.ConstraintLayout>

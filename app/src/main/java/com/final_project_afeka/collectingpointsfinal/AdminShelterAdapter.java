@@ -111,7 +111,7 @@ public class AdminShelterAdapter extends ArrayAdapter<SafePoint> {
         marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter2));
 
         // Approve point
-        String url = mContext.getString(R.string.server_ip)+"/shelters?id="+shelterId; // update shelter
+        String url = mContext.getString(R.string.server_ip)+"/management/shelters?id="+shelterId; // update shelter
         JsonObjectRequest requestUpdateSafePoint = new JsonObjectRequest(Request.Method.PUT, url,null, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -123,7 +123,7 @@ public class AdminShelterAdapter extends ArrayAdapter<SafePoint> {
                 error.printStackTrace();
             }
         });
-        String userUrl = mContext.getString(R.string.server_ip)+"/users/points_approved?email="+email; // add point to user
+        String userUrl = mContext.getString(R.string.server_ip)+"/management/users/points_approved?email="+email; // add point to user
         JsonObjectRequest requestAddPointUser = new JsonObjectRequest(Request.Method.PUT, userUrl,null, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -141,7 +141,7 @@ public class AdminShelterAdapter extends ArrayAdapter<SafePoint> {
 
     private void DeclinePoint(int shelterId, Marker marker, final String email) {
         marker.remove();
-        String url =  mContext.getString(R.string.server_ip)+"/shelters?id="+shelterId;
+        String url =  mContext.getString(R.string.server_ip)+"/management/shelters?id="+shelterId;
         JsonObjectRequest requestUpdateSafePoint = new JsonObjectRequest(Request.Method.DELETE, url,null, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -153,7 +153,7 @@ public class AdminShelterAdapter extends ArrayAdapter<SafePoint> {
                 error.printStackTrace();
             }
         });
-        String userUrl = mContext.getString(R.string.server_ip)+"/users/points_declined?email="+email;
+        String userUrl = mContext.getString(R.string.server_ip)+"/management/users/points_declined?email="+email;
         JsonObjectRequest requestDecreasePointUser = new JsonObjectRequest(Request.Method.PUT, userUrl,null, new com.android.volley.Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {

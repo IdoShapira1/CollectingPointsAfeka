@@ -27,6 +27,9 @@
     <string name="login_failed">אימייל או סיסמא לא נכונים</string>
     <string name="admin_failed">רק משתמש מורשה יכול להיכנס</string>
     <string name="navigate"> נווט לנקודה</string>
+    <string name="cancel_shelter">ביטול נקודת מחסה</string>
+    <string name="delete_shelter">מחק נקודה</string>
+    <string name="cancel"> בטל</string>
     <string name="server_ip">http://18.130.17.203:3000</string>
 
 

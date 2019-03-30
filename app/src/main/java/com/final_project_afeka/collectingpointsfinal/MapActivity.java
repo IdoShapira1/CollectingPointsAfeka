@@ -1,7 +1,11 @@
 package com.final_project_afeka.collectingpointsfinal;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -60,37 +64,30 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback{
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
 
     GoogleMap mMap;
     Marker myMarker = null;
-    Marker destMarker = null;
     private FirebaseAuth mAuth;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private static final int DEFAULT_ZOOM = 16;
     private GeoDataClient mGeoDataClient;
-    private PlaceDetectionClient  mPlaceDetectionClient;
+    private PlaceDetectionClient mPlaceDetectionClient;
     private LatLng mDefaultLocation = new LatLng(32.113819, 34.817794);
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Location mLastKnownLocation;
     private boolean mLocationPermissionGranted;
     private ImageButton uploadBtn;
-    private Spinner spinner;
     final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-    private List<Marker> pendingMarkersList = new ArrayList<>();
-    private List<Marker> approvedMarkersList = new ArrayList<>();
-    private CheckBox pendingCheckBox,approvedCheckBox;
-    private Polyline polyline;
-    private int spinnerCheck = 0;
+    private HashMap<Integer, Marker> pendingMarkersList = new HashMap<>();
+    private HashMap<Integer,Marker> approvedMarkersList = new HashMap<>();
+    private CheckBox pendingCheckBox, approvedCheckBox;
     private TextView currentPoint;
-    private ImageView streetView;
-    private Button navButton;
-    private LatLng dest;
-    private LatLng origin;
     private static final String TAG = "Activity";
     private ConnectionServer connectionServer;
     private ArrayList<SafePoint> shelters;
+    private HashMap<LatLng, Integer> pendingMarkersIds = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,75 +99,24 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        uploadBtn = (ImageButton)findViewById(R.id.upload__btn_img);
-        navButton = (Button) findViewById(R.id.navigationButton);
-        spinner = (Spinner) findViewById(R.id.listOfShelters);
+        uploadBtn = (ImageButton) findViewById(R.id.upload__btn_img);
         currentPoint = (TextView) findViewById(R.id.currentPointText);
-        streetView = (ImageView) findViewById(R.id.streetView);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mapFragment);
         this.connectionServer = new ConnectionServer(this);
         connectionServer.getAllShelters();
-
         mapFragment.getMapAsync(this);
-      //  addSheltersMarkers();
         addFilters();
         uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UploadPoint();
+                uploadPoint();
             }
-        });
-
-        navButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(dest != null){
-                    String format = "geo:0,0?q=" + dest.latitude + "," + dest.longitude +"mode=walking,"+ "("+destMarker.getTitle()+")";
-                    Uri uri = Uri.parse(format);
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                }else{
-                    Toast.makeText(getApplicationContext(), "אנא בחר נקודה לניווט", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-    }
-
-    private void addSheltersNavigation(){
-        List<Marker> allLists = new ArrayList(pendingMarkersList);
-        allLists.addAll(approvedMarkersList);
-        MarkersAdapter customAdapter = new MarkersAdapter(getApplicationContext(),android.R.layout.simple_spinner_item,allLists);
-        spinner.setAdapter(customAdapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view,
-                                       int position, long id) {
-                // Here you get the current item (a User object) that is selected by its position
-                if(++spinnerCheck > 1) {
-                    try {
-                        destMarker = (Marker) spinner.getSelectedItem();
-                        origin = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
-                        dest = new LatLng(destMarker.getPosition().latitude, destMarker.getPosition().longitude);
-                        //getting URL to the Google direction API
-                        String url = getDirectionsUrl(origin, dest);
-                        Log.e(TAG, "onResponse: respone" + url);
-                        DownloadTask downloadTask = new DownloadTask();
-                        // Start downloading json data from Google Directions API
-                        downloadTask.execute(url);
-                    } catch(Exception e){
-                        Toast.makeText(getApplicationContext(), "אנא הדלק רכיב GPS לפני בדיקת ניווט", Toast.LENGTH_LONG).show();
-                    }
-                }
-
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> adapter) {  }
         });
 
     }
-    private void addFilters(){
+
+    private void addFilters() {
         pendingCheckBox = (CheckBox) findViewById(R.id.pendingPointsCheck);
         approvedCheckBox = (CheckBox) findViewById(R.id.approvedPointsCheck);
         pendingCheckBox.setChecked(true);
@@ -178,8 +124,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         pendingCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                for(Marker pendingMarker : pendingMarkersList){
-                    if(pendingCheckBox.isChecked())
+                for (Marker pendingMarker : pendingMarkersList.values()) {
+                    if (pendingCheckBox.isChecked())
                         pendingMarker.setVisible(true);
                     else
                         pendingMarker.setVisible(false);
@@ -189,8 +135,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         approvedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                for(Marker approvedMarker : approvedMarkersList){
-                    if(approvedCheckBox.isChecked())
+                for (Marker approvedMarker : approvedMarkersList.values()) {
+                    if (approvedCheckBox.isChecked())
                         approvedMarker.setVisible(true);
                     else
                         approvedMarker.setVisible(false);
@@ -199,6 +145,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         });
 
     }
+
     @Override
     public void onMapReady(final GoogleMap googleMap) {
         mMap = googleMap;
@@ -217,31 +164,73 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     // Marker was not set yet. Add marker:
                     myMarker = googleMap.addMarker(new MarkerOptions()
                             .position(latLng)
-                            .title("הכנס מקום בטוח")
+                            .title("הכנס נקודה חדשה")
                             .draggable(true)
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.red_shelter2))
-                            .snippet(""));
+                            .snippet(getCompleteAddressString(latLng.latitude, latLng.longitude)));
+                    myMarker.showInfoWindow();
+
                 } else {
                     // Marker already exists, just update it's position
                     myMarker.setPosition(latLng);
+                    myMarker.setSnippet(getCompleteAddressString(latLng.latitude, latLng.longitude));
+                    myMarker.showInfoWindow();
+                    myMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.red_shelter2));
 
                 }
-                //setStreetViewImage();
-                currentPoint.setText(getCompleteAddressString(myMarker.getPosition().latitude,myMarker.getPosition().longitude));
+                currentPoint.setText(getCompleteAddressString(myMarker.getPosition().latitude, myMarker.getPosition().longitude));
             }
         });
+
+        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                if(myMarker != null) {
+                    //Red Marker option
+                    if (myMarker.getId().equals(marker.getId())) {
+                        uploadPoint();
+                        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.orange_shelter2));
+                        connectionServer.getAllShelters();
+                    }
+                }
+                    //Orange Marker options
+                if(pendingMarkersList.values().contains(marker)){
+                    connectionServer.deleteSafePoint(pendingMarkersIds.get(marker.getPosition())); // send delete request
+                    int pointId = pendingMarkersIds.get(marker.getPosition());
+                    pendingMarkersList.get(pointId).remove();
+                }
+
+
+            }
+        });
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                currentPoint.setText(getCompleteAddressString(marker.getPosition().latitude, marker.getPosition().longitude));
+                if(pendingMarkersList.values().contains(marker)){
+                    marker.setSnippet("לחץ על החלון למחיקת הנקודה ");
+
+                }
+                return false;
+            }
+        });
+
+
+
 
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
             public void onMarkerDragStart(Marker arg0) {
                 // TODO Auto-generated method stub
             }
+
             @SuppressWarnings("unchecked")
             @Override
             public void onMarkerDragEnd(Marker arg0) {
                 //setStreetViewImage();
-                currentPoint.setText(getCompleteAddressString(myMarker.getPosition().latitude,myMarker.getPosition().longitude));
+                currentPoint.setText(getCompleteAddressString(myMarker.getPosition().latitude, myMarker.getPosition().longitude));
             }
+
             @Override
             public void onMarkerDrag(Marker arg0) {
                 //TODO Auto-generated method stub
@@ -250,29 +239,23 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
 
-    private void setStreetViewImage(){
-        // Disabled due to Google API new policies
-        String imageURL;
-        imageURL = "https://maps.googleapis.com/maps/api/streetview?size=400x400&location="+myMarker.getPosition().latitude+","+myMarker.getPosition().longitude+"&fov=90&heading=235&pitch=10&key=AIzaSyBmGS_edoEQbVLLUm8sswajunOiwaotnok";
-        Picasso.get().load(imageURL).into(streetView);
-        currentPoint.setText(getCompleteAddressString(myMarker.getPosition().latitude,myMarker.getPosition().longitude));
-    }
 
-    public void addSheltersMarkers(ArrayList<SafePoint> shelters){
-        for(int i = 0 ; i < shelters.size() ; i++){
+
+
+    public void addSheltersMarkers(ArrayList<SafePoint> shelters) {
+        for (int i = 0; i < shelters.size(); i++) {
             MarkerOptions marker = new MarkerOptions()
                     .position(new LatLng(shelters.get(i).getLatitude(), shelters.get(i).getLongitude()))
                     .title(shelters.get(i).getAddress());
-
-            if (shelters.get(i).getApproved() == 1){
+            if (shelters.get(i).getApproved() == 1) {
                 marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter2));
-                approvedMarkersList.add(mMap.addMarker(marker));
-            }else{
+                approvedMarkersList.put(shelters.get(i).getId(), mMap.addMarker(marker));
+            } else {
                 marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_shelter2));
-                pendingMarkersList.add(mMap.addMarker(marker));
+                pendingMarkersIds.put(marker.getPosition(),shelters.get(i).getId());
+                pendingMarkersList.put(shelters.get(i).getId(), mMap.addMarker(marker));
             }
         }
-        addSheltersNavigation();
     }
 
 
@@ -289,7 +272,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 mMap.getUiSettings().setMyLocationButtonEnabled(false);
                 mLastKnownLocation = null;
             }
-        } catch (SecurityException e)  {
+        } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
         }
     }
@@ -312,7 +295,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                         new LatLng(mLastKnownLocation.getLatitude(),
                                                 mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
-                            }catch (NullPointerException e){
+                            } catch (NullPointerException e) {
                                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
                                 mMap.getUiSettings().setMyLocationButtonEnabled(false);
                             }
@@ -323,10 +306,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     }
                 });
             }
-        } catch(SecurityException e)  {
+        } catch (SecurityException e) {
             Log.e("Exception: %s", e.getMessage());
         }
     }
+
     private void getLocationPermission() {
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -355,6 +339,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         }
         updateLocationUI();
     }
+
     private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
         String strAdd = "";
         Geocoder geocoder = new Geocoder(this, Locale.ENGLISH);
@@ -375,162 +360,19 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         return strAdd;
     }
 
-    public void UploadPoint() {
+    public void uploadPoint() {
         if (myMarker != null) {
             double lng = myMarker.getPosition().longitude;
             double lat = myMarker.getPosition().latitude;
             final String email = mAuth.getCurrentUser().getEmail();
-            SafePoint point = new SafePoint(0,email,lat,lng,0,getCompleteAddressString(lat,lng));
+            SafePoint point = new SafePoint(0, email, lat, lng, 0, getCompleteAddressString(lat, lng));
             connectionServer.uploadSafePoint(point);
             connectionServer.updatePointsCollected(email);
             Toast.makeText(getApplicationContext(), "מחסה הועלה למאגר הנתונים", Toast.LENGTH_LONG).show();
-        }
-        else{
+        } else {
             Toast.makeText(getApplicationContext(), "אנא בחר נקודה!", Toast.LENGTH_LONG).show();
         }
     }
 
 
-
-    private class DownloadTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... url) {
-
-            String data = "";
-
-            try {
-                data = downloadUrl(url[0]);
-            } catch (Exception e) {
-                Log.d("Background Task", e.toString());
-            }
-            return data;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-
-            ParserTask parserTask = new ParserTask();
-
-
-            parserTask.execute(result);
-
-        }
-    }
-
-    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
-
-        // Parsing the data in non-ui thread
-        @Override
-        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
-
-            JSONObject jObject;
-            List<List<HashMap<String, String>>> routes = null;
-
-            try {
-                jObject = new JSONObject(jsonData[0]);
-                DirectionsJSONParser parser = new DirectionsJSONParser();
-
-                routes = parser.parse(jObject);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return routes;
-        }
-
-        @Override
-        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
-            ArrayList points = null;
-            PolylineOptions lineOptions = null;
-            MarkerOptions markerOptions = new MarkerOptions();
-            for (int i = 0; i < result.size(); i++) {
-                points = new ArrayList();
-                lineOptions = new PolylineOptions();
-
-                List<HashMap<String, String>> path = result.get(i);
-
-                for (int j = 0; j < path.size(); j++) {
-                    HashMap<String, String> point = path.get(j);
-
-                    double lat = Double.parseDouble(point.get("lat"));
-                    double lng = Double.parseDouble(point.get("lng"));
-                    LatLng position = new LatLng(lat, lng);
-
-                    points.add(position);
-                }
-
-                lineOptions.addAll(points);
-                lineOptions.width(12);
-                lineOptions.color(Color.RED);
-                lineOptions.geodesic(true);
-
-            }
-
-// Drawing polyline in the Google Map for the i-th route
-            try{
-                if (polyline != null)
-                    polyline.remove();
-                polyline = mMap.addPolyline(lineOptions);
-            } catch(Exception e){
-                Toast.makeText(getApplicationContext(), "לא ניתן לייצר מסלול לנקודה זו"+e, Toast.LENGTH_LONG).show();
-            }
-
-        }
-    }
-
-    private String getDirectionsUrl(LatLng origin, LatLng dest) {
-        // Origin of route
-        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
-        // Destination of route
-        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
-        // Sensor enabled
-        String sensor = "sensor=true";
-        String mode = "mode=walking";
-        // Building the parameters to the web service
-        String parameters = str_origin + "&" + str_dest + "&" + sensor + "&" + mode;
-        // Output format
-        String output = "json";
-        // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters+"&key=AIzaSyBmGS_edoEQbVLLUm8sswajunOiwaotnok";
-        return url;
-    }
-
-    /**
-     * A method to download json data from url
-     */
-    private String downloadUrl(String strUrl) throws IOException {
-        String data = "";
-        InputStream iStream = null;
-        HttpURLConnection urlConnection = null;
-        try {
-            URL url = new URL(strUrl);
-
-            urlConnection = (HttpURLConnection) url.openConnection();
-
-            urlConnection.connect();
-
-            iStream = urlConnection.getInputStream();
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
-
-            StringBuffer sb = new StringBuffer();
-
-            String line = "";
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-
-            data = sb.toString();
-
-            br.close();
-
-        } catch (Exception e) {
-            Log.d("Exception", e.toString());
-        } finally {
-            iStream.close();
-            urlConnection.disconnect();
-        }
-        return data;
-    }
 }

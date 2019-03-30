@@ -88,6 +88,22 @@ public class ConnectionServer {
         mQueue.add(request);
     }
 
+    public void deleteSafePoint(int pointId){
+        String url = mContext.getString(R.string.server_ip)+"/management/shelters?id="+pointId; // delete shelter
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE, url,null, new com.android.volley.Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.e(TAG, "onResponse: respone"+ response );
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        mQueue.add(request);
+    }
+
     public void updatePointsCollected(String email){
         String url = mContext.getString(R.string.server_ip)+"/management/users/points_collected?email="+email; // post new shelter
 
