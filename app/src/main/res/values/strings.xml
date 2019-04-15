@@ -5,8 +5,9 @@
     <string name="insert_point">Insert Point</string>
     <string name="google_map_api">AIzaSyBNGthAXVuFNlo3EfMRMq_Ei7fKr9U8TnY</string>
     <string name="title_activity_maps_fragment">Map</string>
-    <string name="show_approved_points">הצג נקודות שאושרו</string>
-    <string name="show_pending_points">הצג נקודות שטרם אושרו</string>
+    <string name="show_approved_points">הצג רק נקודות שאושרו</string>
+    <string name="show_pending_points">הצג רק נקודות שטרם אושרו</string>
+    <string name="show_all_points">הצג את כל הנקודות שהוכנסו</string>
     <string name="test_navigation">הצג ניווט לנקודה מהמיקום הנוכחי</string>
     <string name="insert_new_point">הכנס נקודה חדשה</string>
     <string name="current_point">נקודת מחסה נוכחית</string>

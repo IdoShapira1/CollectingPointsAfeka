@@ -7,89 +7,124 @@
     tools:context="com.final_project_afeka.collectingpointsfinal.MapActivity">
 
 
-    <fragment
-        android:id="@+id/mapFragment"
-        class="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="372dp"
-        android:layout_height="444dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/upload__btn_img"
-        android:layout_width="40dp"
-        android:layout_height="35dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/pendingPointsCheck"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mapFragment"
-        app:layout_constraintVertical_bias="0.941"
-        app:srcCompat="@android:drawable/ic_menu_upload_you_tube" />
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
 
-    <CheckBox
-        android:id="@+id/pendingPointsCheck"
-        android:layout_width="142dp"
-        android:layout_height="33dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/show_pending_points"
-        app:layout_constraintBottom_toTopOf="@+id/approvedPointsCheck"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.031"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.987" />
+        <!-- Layout to contain contents of main body of screen (drawer will slide over this) -->
+        <TextView
+            android:id="@+id/currentPointText"
+            android:layout_width="270dp"
+            android:layout_height="27dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:text="@string/current_point"
+            app:layout_constraintBottom_toTopOf="@+id/uploadShelterText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mapFragment" />
 
-    <CheckBox
-        android:id="@+id/approvedPointsCheck"
-        android:layout_width="138dp"
-        android:layout_height="33dp"
-        android:layout_marginBottom="28dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:text="@string/show_approved_points"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.042"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/uploadShelterText"
+            android:layout_width="94dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="4dp"
+            android:text="@string/insert_new_point"
+            android:textAppearance="@android:style/TextAppearance.Material"
+            app:layout_constraintBottom_toTopOf="@+id/pendingPointsCheck"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/upload__btn_img" />
 
-    <TextView
-        android:id="@+id/uploadShelterText"
-        android:layout_width="94dp"
-        android:layout_height="38dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="4dp"
-        android:text="@string/insert_new_point"
-        android:textAppearance="@android:style/TextAppearance.Material"
-        app:layout_constraintBottom_toTopOf="@+id/pendingPointsCheck"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/upload__btn_img" />
+        <CheckBox
+            android:id="@+id/pendingPointsCheck"
+            android:layout_width="142dp"
+            android:layout_height="33dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/show_pending_points"
+            app:layout_constraintBottom_toTopOf="@+id/approvedPointsCheck"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.031"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.987" />
 
-    <TextView
-        android:id="@+id/currentPointText"
-        android:layout_width="270dp"
-        android:layout_height="27dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:text="@string/current_point"
-        app:layout_constraintBottom_toTopOf="@+id/uploadShelterText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mapFragment" />
+        <CheckBox
+            android:id="@+id/approvedPointsCheck"
+            android:layout_width="138dp"
+            android:layout_height="33dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="28dp"
+            android:text="@string/show_approved_points"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.042"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <fragment
+            android:id="@+id/mapFragment"
+            class="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="372dp"
+            android:layout_height="444dp"
+            android:layout_marginTop="120dp"
+            app:layout_constraintHorizontal_bias="0.41"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/include_bar"
+                layout="@layout/activity_bar"
+                android:layout_width="match_parent"
+                android:layout_height="60dp" />
+
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/content_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- Container for contents of drawer - use NavigationView to make configuration easier -->
+        <android.support.design.widget.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@color/colorAccent"
+            android:fitsSystemWindows="true"
+
+            app:headerLayout="@layout/nav_header_main"
+            app:menu="@menu/activity_main_drawer">
+
+        </android.support.design.widget.NavigationView>
+
+
+
+
+
+    </android.support.v4.widget.DrawerLayout>
+
 
 </android.support.constraint.ConstraintLayout>
+

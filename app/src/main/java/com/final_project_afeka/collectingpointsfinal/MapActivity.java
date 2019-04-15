@@ -5,7 +5,10 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +19,7 @@ import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -64,7 +68,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback ,NavigationView.OnNavigationItemSelectedListener{
 
 
     GoogleMap mMap;
@@ -78,16 +82,16 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private Location mLastKnownLocation;
     private boolean mLocationPermissionGranted;
-    private ImageButton uploadBtn;
     final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
     private HashMap<Integer, Marker> pendingMarkersList = new HashMap<>();
     private HashMap<Integer,Marker> approvedMarkersList = new HashMap<>();
-    private CheckBox pendingCheckBox, approvedCheckBox;
     private TextView currentPoint;
     private static final String TAG = "Activity";
     private ConnectionServer connectionServer;
     private ArrayList<SafePoint> shelters;
     private HashMap<LatLng, Integer> pendingMarkersIds = new HashMap<>();
+    private DrawerLayout mDrawerLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,52 +103,57 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        uploadBtn = (ImageButton) findViewById(R.id.upload__btn_img);
         currentPoint = (TextView) findViewById(R.id.currentPointText);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        View bar = findViewById(R.id.include_bar);
+        ImageButton imageButton = bar.findViewById(R.id.nav_view_btn);
+        mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDrawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mapFragment);
         this.connectionServer = new ConnectionServer(this);
         connectionServer.getAllShelters();
         mapFragment.getMapAsync(this);
-        addFilters();
-        uploadBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                uploadPoint();
-            }
-        });
+
 
     }
 
-    private void addFilters() {
-        pendingCheckBox = (CheckBox) findViewById(R.id.pendingPointsCheck);
-        approvedCheckBox = (CheckBox) findViewById(R.id.approvedPointsCheck);
-        pendingCheckBox.setChecked(true);
-        approvedCheckBox.setChecked(true);
-        pendingCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                for (Marker pendingMarker : pendingMarkersList.values()) {
-                    if (pendingCheckBox.isChecked())
-                        pendingMarker.setVisible(true);
-                    else
-                        pendingMarker.setVisible(false);
-                }
-            }
-        });
-        approvedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                for (Marker approvedMarker : approvedMarkersList.values()) {
-                    if (approvedCheckBox.isChecked())
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        switch(item.getOrder()){
+            case 0:
+                for (Marker pendingMarker : pendingMarkersList.values())
+                    pendingMarker.setVisible(true);
+                for (Marker approvedMarker : approvedMarkersList.values())
+                    approvedMarker.setVisible(true);
+                break;
+            case 1:
+                for (Marker approvedMarker : approvedMarkersList.values())
                         approvedMarker.setVisible(true);
-                    else
-                        approvedMarker.setVisible(false);
-                }
-            }
-        });
+                for (Marker pendingMarker : pendingMarkersList.values())
+                    pendingMarker.setVisible(false);
+                break;
+            case 2:
+                for (Marker pendingMarker : pendingMarkersList.values())
+                    pendingMarker.setVisible(true);
+                for (Marker approvedMarker : approvedMarkersList.values())
+                    approvedMarker.setVisible(false);
 
+                break;
+        }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
+
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
@@ -190,7 +199,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     if (myMarker.getId().equals(marker.getId())) {
                         uploadPoint();
                         marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.orange_shelter2));
-                        connectionServer.getAllShelters();
+
                     }
                 }
                     //Orange Marker options
@@ -243,6 +252,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
 
     public void addSheltersMarkers(ArrayList<SafePoint> shelters) {
+        mMap.clear();
         for (int i = 0; i < shelters.size(); i++) {
             MarkerOptions marker = new MarkerOptions()
                     .position(new LatLng(shelters.get(i).getLatitude(), shelters.get(i).getLongitude()))
