@@ -15,12 +15,12 @@
             android:id="@+id/showApprovedPoints"
             android:orderInCategory="1"
             android:checkable="true"
-            android:checked="true"/>
+            android:checked="false"/>
         <item android:title="@string/show_pending_points"
             android:id="@+id/showPendingPoints"
             android:orderInCategory="2"
             android:checkable="true"
-            android:checked="true"/>
+            android:checked="false"/>
     </group>
 
 </menu>

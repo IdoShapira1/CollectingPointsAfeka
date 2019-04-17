@@ -103,7 +103,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mPlaceDetectionClient = Places.getPlaceDetectionClient(this, null);
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        currentPoint = (TextView) findViewById(R.id.currentPointText);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View bar = findViewById(R.id.include_bar);
@@ -187,7 +186,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     myMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.red_shelter2));
 
                 }
-                currentPoint.setText(getCompleteAddressString(myMarker.getPosition().latitude, myMarker.getPosition().longitude));
             }
         });
 
@@ -215,7 +213,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                currentPoint.setText(getCompleteAddressString(marker.getPosition().latitude, marker.getPosition().longitude));
                 if(pendingMarkersList.values().contains(marker)){
                     marker.setSnippet("לחץ על החלון למחיקת הנקודה ");
 
@@ -237,7 +234,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public void onMarkerDragEnd(Marker arg0) {
                 //setStreetViewImage();
-                currentPoint.setText(getCompleteAddressString(myMarker.getPosition().latitude, myMarker.getPosition().longitude));
             }
 
             @Override

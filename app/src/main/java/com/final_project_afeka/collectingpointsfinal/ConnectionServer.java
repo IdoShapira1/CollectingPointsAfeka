@@ -47,6 +47,7 @@ public class ConnectionServer {
                         SafePoint point = new SafePoint(she.getInt("id"),she.getString("user_email"), she.getDouble("latitude") , she.getDouble("longitude"), she.getInt("approved"), she.getString("address"));
                         shelters.add(point);
                     }
+
                     mapActivity.addSheltersMarkers(shelters);
 
                 } catch (JSONException e) {
