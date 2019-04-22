@@ -71,7 +71,7 @@ public class AdminShelterAdapter extends ArrayAdapter<SafePoint> {
         bt_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pendingMarkersList.get(position).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter2));
+                pendingMarkersList.get(position).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter));
                 Log.d(TAG, "onClick: shelter id: "+shelterId);
                 approvePoint(shelterId ,pendingMarkersList.get(position), getItem(position).getEmail());
                 Toast.makeText(mContext,"מחסה אושר",Toast.LENGTH_LONG).show();
@@ -108,7 +108,7 @@ public class AdminShelterAdapter extends ArrayAdapter<SafePoint> {
     }
 
     private void approvePoint(int shelterId, Marker marker, final String email) {
-        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter2));
+        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter));
 
         // Approve point
         String url = mContext.getString(R.string.server_ip)+"/management/shelters?id="+shelterId; // update shelter

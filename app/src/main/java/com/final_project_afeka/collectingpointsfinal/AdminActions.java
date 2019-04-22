@@ -169,10 +169,10 @@ public class AdminActions extends AppCompatActivity implements OnMapReadyCallbac
                                 .title(shelter.getAddress());
                         if(shelter.getApproved() == 1)
                         {
-                            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter2));
+                            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter));
                             mMap.addMarker(marker);
                         }else{
-                            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_shelter2));
+                            marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.yellow_shelter));
                             pendingMarkersList.add(mMap.addMarker(marker));
                             pendingShelterList.add(shelter);
                             shelterIdPending.add(shelter.getId());

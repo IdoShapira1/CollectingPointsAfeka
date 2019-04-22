@@ -174,7 +174,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                             .position(latLng)
                             .title("הכנס נקודה חדשה")
                             .draggable(true)
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.red_shelter2))
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.red_shelter))
                             .snippet(getCompleteAddressString(latLng.latitude, latLng.longitude)));
                     myMarker.showInfoWindow();
 
@@ -183,7 +183,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     myMarker.setPosition(latLng);
                     myMarker.setSnippet(getCompleteAddressString(latLng.latitude, latLng.longitude));
                     myMarker.showInfoWindow();
-                    myMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.red_shelter2));
+                    myMarker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.red_shelter));
 
                 }
             }
@@ -196,7 +196,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     //Red Marker option
                     if (myMarker.getId().equals(marker.getId())) {
                         uploadPoint();
-                        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.orange_shelter2));
+                        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.yellow_shelter));
 
                     }
                 }
@@ -254,10 +254,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     .position(new LatLng(shelters.get(i).getLatitude(), shelters.get(i).getLongitude()))
                     .title(shelters.get(i).getAddress());
             if (shelters.get(i).getApproved() == 1) {
-                marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter2));
+                marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.green_shelter));
                 approvedMarkersList.put(shelters.get(i).getId(), mMap.addMarker(marker));
             } else {
-                marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_shelter2));
+                marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.yellow_shelter));
                 pendingMarkersIds.put(marker.getPosition(),shelters.get(i).getId());
                 pendingMarkersList.put(shelters.get(i).getId(), mMap.addMarker(marker));
             }
