@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Collecting Shelter Points</string>
+    <string name="app_name">פיקוד העורף - איסוף נקודות מחסה</string>
     <string name="insert_points_popup">מסך הזנת נקודות</string>
     <string name="admin_popup"> מסך אישור נקודות אדמין</string>
     <string name="insert_point">Insert Point</string>

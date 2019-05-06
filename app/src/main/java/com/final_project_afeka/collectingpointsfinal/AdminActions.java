@@ -2,7 +2,6 @@ package com.final_project_afeka.collectingpointsfinal;
 
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -31,11 +30,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -71,8 +67,8 @@ public class AdminActions extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.mapFragmentAdmin);
         mapFragment.getMapAsync(this);
         getAllShelters();
-        adapter = new AdminShelterAdapter(this,R.layout.adpter_view_layout,pendingShelterList,pendingMarkersList,shelterIdPending,mMap);
-      //  adapter = new AdminShelterAdapter(this,R.layout.adpter_view_layout, pendingShelterList, pendingMarkersList, shelterIdPending, mMap);
+        adapter = new AdminShelterAdapter(this,R.layout.adapter_view_layout,pendingShelterList,pendingMarkersList,shelterIdPending,mMap);
+      //  adapter = new AdminShelterAdapter(this,R.layout.adapter_view_layout, pendingShelterList, pendingMarkersList, shelterIdPending, mMap);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
     }

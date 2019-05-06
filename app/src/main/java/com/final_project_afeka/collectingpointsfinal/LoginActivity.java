@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,8 +24,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText email;
     private EditText password;
-
     private FirebaseAuth mAuth;
+    private static final String TAG = "Login";
 
 
 
@@ -39,6 +40,10 @@ public class LoginActivity extends AppCompatActivity {
         confirm = (Button) findViewById(R.id.confirmLoginActivity);
         forgotPassword = (TextView) findViewById(R.id.forgotPassword);
         mAuth = FirebaseAuth.getInstance();
+        if (mAuth.getCurrentUser() != null){
+            Intent intent = new Intent(LoginActivity.this,MainMenuActivity.class);
+            startActivity(intent);
+        }
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
