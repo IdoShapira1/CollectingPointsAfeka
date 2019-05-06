@@ -91,6 +91,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private ArrayList<SafePoint> shelters;
     private HashMap<LatLng, Integer> pendingMarkersIds = new HashMap<>();
     private DrawerLayout mDrawerLayout;
+    private SupportMapFragment mapFragment;
 
 
     @Override
@@ -115,7 +116,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         });
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.mapFragment);
         this.connectionServer = new ConnectionServer(this);
         connectionServer.getAllShelters();
@@ -173,7 +174,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     myMarker = googleMap.addMarker(new MarkerOptions()
                             .position(latLng)
                             .title("הכנס נקודה חדשה")
-                            .draggable(true)
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.red_shelter))
                             .snippet(getCompleteAddressString(latLng.latitude, latLng.longitude)));
                     myMarker.showInfoWindow();
@@ -373,11 +373,22 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             final String email = mAuth.getCurrentUser().getEmail();
             SafePoint point = new SafePoint(0, email, lat, lng, 0, getCompleteAddressString(lat, lng));
             connectionServer.uploadSafePoint(point);
-            connectionServer.updatePointsCollected(email);
-            Toast.makeText(getApplicationContext(), "מחסה הועלה למאגר הנתונים", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.point_uploaded, Toast.LENGTH_LONG).show();
+
+
         } else {
-            Toast.makeText(getApplicationContext(), "אנא בחר נקודה!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.choose_point, Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void updateNewPointOnMap(SafePoint point, int pointId){
+        MarkerOptions marker = new MarkerOptions()
+                .position(new LatLng(point.getLatitude(), point.getLongitude()))
+                .title(point.getAddress());
+        marker.icon(BitmapDescriptorFactory.fromResource(R.drawable.yellow_shelter));
+        pendingMarkersIds.put(marker.getPosition(),pointId);
+        pendingMarkersList.put(pointId, mMap.addMarker(marker));
+
     }
 
 

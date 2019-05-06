@@ -31,7 +31,8 @@
     <string name="cancel_shelter">ביטול נקודת מחסה</string>
     <string name="delete_shelter">מחק נקודה</string>
     <string name="cancel"> בטל</string>
-    <string name="server_ip">http://18.130.17.203:3000</string>
-
+    <string name="server_ip">http://109.226.11.202:3000</string>
+    <string name="point_uploaded">מחסה הועלה למאגר הנתונים</string>
+    <string name="choose_point">אנא בחר נקודה</string>
 
 </resources>

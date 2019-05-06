@@ -38,10 +38,14 @@
 
     <Button
         android:id="@+id/confirmLoginActivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="126dp"
+        android:layout_height="61dp"
         android:layout_marginBottom="60dp"
+        android:background="@android:color/holo_orange_dark"
         android:text="@string/confirm"
+        android:textColor="#ffffff"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"
         app:layout_constraintBottom_toTopOf="@+id/forgotPassword"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintLeft_toLeftOf="parent"

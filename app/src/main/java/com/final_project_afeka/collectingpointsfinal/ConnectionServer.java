@@ -64,7 +64,7 @@ public class ConnectionServer {
         return  shelters;
     }
 
-    public void uploadSafePoint(SafePoint point){
+    public void uploadSafePoint(final SafePoint point){
         String url = mContext.getString(R.string.server_ip)+"/management/shelters"; // post new shelter
         Map<String, String> params = new HashMap<String, String>();
         params.put("user_email",point.getEmail());
@@ -79,6 +79,13 @@ public class ConnectionServer {
             @Override
             public void onResponse(JSONObject response) {
                 Log.e(TAG, "onResponse: respone"+ response );
+                updatePointsCollected(point.getEmail());
+                try {
+                    Log.e(TAG, "onResponse: respone"+ response.getInt("insertId") );
+                    mapActivity.updateNewPointOnMap(point, response.getInt("insertId"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }, new com.android.volley.Response.ErrorListener() {
             @Override
