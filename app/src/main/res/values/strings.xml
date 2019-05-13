@@ -34,5 +34,6 @@
     <string name="server_ip">http://109.226.11.202:3000</string>
     <string name="point_uploaded">מחסה הועלה למאגר הנתונים</string>
     <string name="choose_point">אנא בחר נקודה</string>
+    <string name="press_window"> לחץ על החלון למחיקת הנקודה</string>
 
 </resources>

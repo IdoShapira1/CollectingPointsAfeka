@@ -30,13 +30,10 @@ public class MainMenuActivity extends AppCompatActivity implements NavigationVie
     private static final String TAG = MainMenuActivity.class.getSimpleName();
     private User user;
     private FirebaseAuth mAuth;
-    private DatabaseReference mDatabase;
     private EditText nameET;
     private EditText collectEt;
     private EditText approveEt;
     private EditText declineEt;
-    private FloatingActionButton floatMenu;
-    boolean finishReadFromDB = false;
     private static RequestQueue mQueue;
     private DrawerLayout mDrawerLayout;
 

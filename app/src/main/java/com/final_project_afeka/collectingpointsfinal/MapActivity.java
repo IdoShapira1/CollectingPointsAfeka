@@ -123,6 +123,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
 
+
     }
 
     @Override
@@ -173,7 +174,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     // Marker was not set yet. Add marker:
                     myMarker = googleMap.addMarker(new MarkerOptions()
                             .position(latLng)
-                            .title("הכנס נקודה חדשה")
+                            .title(getResources().getString(R.string.insert_new_point))
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.red_shelter))
                             .snippet(getCompleteAddressString(latLng.latitude, latLng.longitude)));
                     myMarker.showInfoWindow();
@@ -192,16 +193,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                if(myMarker != null) {
-                    //Red Marker option
-                    if (myMarker.getId().equals(marker.getId())) {
-                        uploadPoint();
-                        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.yellow_shelter));
 
+
+                if(myMarker != null) {
+                    boolean markerStatus = marker.getSnippet().equals(getResources().getString(R.string.press_window)); // is marker yellow
+                    //Red Marker option
+                    if (myMarker.getId().equals(marker.getId()) ) {
+                        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.yellow_shelter));
+                        uploadPoint();
+                        myMarker.remove();
+                        myMarker = null;
                     }
                 }
                     //Orange Marker options
-                if(pendingMarkersList.values().contains(marker)){
+                if(pendingMarkersList.values().contains(marker) ){
                     connectionServer.deleteSafePoint(pendingMarkersIds.get(marker.getPosition())); // send delete request
                     int pointId = pendingMarkersIds.get(marker.getPosition());
                     pendingMarkersList.get(pointId).remove();
@@ -214,33 +219,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             @Override
             public boolean onMarkerClick(Marker marker) {
                 if(pendingMarkersList.values().contains(marker)){
-                    marker.setSnippet("לחץ על החלון למחיקת הנקודה ");
+                    marker.setSnippet(getResources().getString(R.string.press_window));
 
                 }
                 return false;
             }
         });
 
-
-
-
-        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
-            @Override
-            public void onMarkerDragStart(Marker arg0) {
-                // TODO Auto-generated method stub
-            }
-
-            @SuppressWarnings("unchecked")
-            @Override
-            public void onMarkerDragEnd(Marker arg0) {
-                //setStreetViewImage();
-            }
-
-            @Override
-            public void onMarkerDrag(Marker arg0) {
-                //TODO Auto-generated method stub
-            }
-        });
     }
 
 
@@ -270,7 +255,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             return;
         }
         try {
-            if (mLocationPermissionGranted) {
+            if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                mLocationPermissionGranted = true;
                 mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
             } else {
